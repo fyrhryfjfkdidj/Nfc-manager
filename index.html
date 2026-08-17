@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NFC Manager</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    color: #111827;
+}
+
+header {
+    background: white;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+}
+
+.stats {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    overflow-x: auto;
+}
+
+.stat {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    min-width: 120px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.stat strong {
+    display: block;
+    font-size: 25px;
+    margin-top: 5px;
+}
+
+#cards {
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.card {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 15px;
+    padding: 18px;
+    min-height: 120px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card.used {
+    background: #eaf3ff;
+    border-color: #2563eb;
+}
+
+.card-number {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.status {
+    font-size: 13px;
+    padding: 5px 9px;
+    border-radius: 20px;
+    display: inline-block;
+    background: #e5e7eb;
+}
+
+.used .status {
+    background: #2563eb;
+    color: white;
+}
+
+.shop {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* PAGE GESTION */
+
+#management {
+    display: none;
+    padding: 20px;
+}
+
+.back {
+    border: none;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.panel {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 6px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+textarea {
+    min-height: 100px;
+}
+
+button.save {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button.test {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px;
+    background: #111827;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button.reset {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    background: #fee2e2;
+    color: #b91c1c;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+@media (min-width: 700px) {
+    #cards {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>📱 NFC Manager</h1>
+    <p>Gestion de tes cartes NFC</p>
+</header>
+
+<div id="home">
+
+    <div class="stats">
+
+        <div class="stat">
+            Total
+            <strong id="total">100</strong>
+        </div>
+
+        <div class="stat">
+            Utilisées
+            <strong id="used">0</strong>
+        </div>
+
+        <div class="stat">
+            Disponibles
+            <strong id="free">100</strong>
+        </div>
+
+    </div>
+
+    <div id="cards"></div>
+
+</div>
+
+
+<div id="management">
+
+    <button class="back" onclick="goHome()">
+        ← Retour
+    </button>
+
+    <div class="panel">
+
+        <h2 id="managementTitle">
+            Carte #00001
+        </h2>
+
+        <label>Nom du commerce</label>
+
+        <input
+            id="shop"
+            placeholder="Ex : Restaurant Mohamed"
+        >
+
+        <label>Lien Google</label>
+
+        <input
+            id="link"
+            placeholder="https://g.page/..."
+        >
+
+        <label>Description</label>
+
+        <textarea
+            id="description"
+            placeholder="Description de la carte..."
+        ></textarea>
+
+        <label>Statut</label>
+
+        <select id="status">
+
+            <option value="free">
+                ⚪ Disponible
+            </option>
+
+            <option value="used">
+                🔵 Utilisée
+            </option>
+
+        </select>
+
+        <button class="save" onclick="saveCard()">
+            💾 Enregistrer
+        </button>
+
+        <button class="test" onclick="testLink()">
+            🔗 Tester le lien
+        </button>
+
+        <button class="reset" onclick="resetCard()">
+            Réinitialiser la carte
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/*
+========================================
+CRÉATION DES 100 CARTES
+========================================
+*/
+
+let cards = JSON.parse(
+    localStorage.getItem("nfcCards")
+);
+
+if (!cards) {
+
+    cards = [];
+
+    for (let i = 1; i <= 100; i++) {
+
+        cards.push({
+
+            id: i,
+
+            shop: "",
+
+            link: "",
+
+            description: "",
+
+            status: "free"
+
+        });
+
+    }
+
+    saveDatabase();
+}
+
+
+/*
+========================================
+CARTE ACTUELLEMENT OUVERTE
+========================================
+*/
+
+let currentCard = null;
+
+
+/*
+========================================
+SAUVEGARDE
+========================================
+*/
+
+function saveDatabase() {
+
+    localStorage.setItem(
+        "nfcCards",
+        JSON.stringify(cards)
+    );
+
+}
+
+
+/*
+========================================
+AFFICHER LES CARTES
+========================================
+*/
+
+function displayCards() {
+
+    const container =
+        document.getElementById("cards");
+
+    container.innerHTML = "";
+
+    cards.forEach(card => {
+
+        const element =
+            document.createElement("div");
+
+        element.className = "card";
+
+        if (card.status === "used") {
+
+            element.classList.add("used");
+
+        }
+
+        const number =
+            String(card.id).padStart(5, "0");
+
+        element.innerHTML = `
+
+            <div class="card-number">
+                #${number}
+            </div>
+
+            <span class="status">
+
+                ${
+                    card.status === "used"
+                    ? "🔵 Utilisée"
+                    : "⚪ Disponible"
+                }
+
+            </span>
+
+            <div class="shop">
+
+                ${
+                    card.shop
+                    ? card.shop
+                    : "Aucun commerce"
+                }
+
+            </div>
+
+        `;
+
+        element.onclick = function () {
+
+            openCard(card.id);
+
+        };
+
+        container.appendChild(element);
+
+    });
+
+
+    updateStats();
+
+}
+
+
+/*
+========================================
+STATISTIQUES
+========================================
+*/
+
+function updateStats() {
+
+    const used =
+        cards.filter(
+            card => card.status === "used"
+        ).length;
+
+    document.getElementById("total")
+        .textContent = cards.length;
+
+    document.getElementById("used")
+        .textContent = used;
+
+    document.getElementById("free")
+        .textContent =
+            cards.length - used;
+
+}
+
+
+/*
+========================================
+OUVRIR UNE CARTE
+========================================
+*/
+
+function openCard(id) {
+
+    currentCard =
+        cards.find(card => card.id === id);
+
+    document.getElementById("home")
+        .style.display = "none";
+
+    document.getElementById("management")
+        .style.display = "block";
+
+
+    const number =
+        String(currentCard.id)
+        .padStart(5, "0");
+
+
+    document.getElementById(
+        "managementTitle"
+    ).textContent =
+        "Carte #" + number;
+
+
+    document.getElementById("shop")
+        .value =
+        currentCard.shop;
+
+
+    document.getElementById("link")
+        .value =
+        currentCard.link;
+
+
+    document.getElementById("description")
+        .value =
+        currentCard.description;
+
+
+    document.getElementById("status")
+        .value =
+        currentCard.status;
+
+}
+
+
+/*
+========================================
+ENREGISTRER
+========================================
+*/
+
+function saveCard() {
+
+    if (!currentCard) return;
+
+
+    currentCard.shop =
+        document.getElementById("shop")
+        .value;
+
+
+    currentCard.link =
+        document.getElementById("link")
+        .value;
+
+
+    currentCard.description =
+        document.getElementById("description")
+        .value;
+
+
+    currentCard.status =
+        document.getElementById("status")
+        .value;
+
+
+    saveDatabase();
+
+
+    alert("✅ Carte enregistrée !");
+
+
+    displayCards();
+
+}
+
+
+/*
+========================================
+TESTER LE LIEN
+========================================
+*/
+
+function testLink() {
+
+    const link =
+        document.getElementById("link")
+        .value;
+
+
+    if (!link) {
+
+        alert("⚠️ Aucun lien renseigné.");
+
+        return;
+
+    }
+
+
+    window.open(link, "_blank");
+
+}
+
+
+/*
+========================================
+RÉINITIALISER
+========================================
+*/
+
+function resetCard() {
+
+    if (!currentCard) return;
+
+
+    const confirmation =
+        confirm(
+            "Réinitialiser cette carte ?"
+        );
+
+
+    if (!confirmation) return;
+
+
+    currentCard.shop = "";
+
+    currentCard.link = "";
+
+    currentCard.description = "";
+
+    currentCard.status = "free";
+
+
+    saveDatabase();
+
+
+    openCard(currentCard.id);
+
+    displayCards();
+
+}
+
+
+/*
+========================================
+RETOUR
+========================================
+*/
+
+function goHome() {
+
+    document.getElementById("management")
+        .style.display = "none";
+
+    document.getElementById("home")
+        .style.display = "block";
+
+    displayCards();
+
+}
+
+
+/*
+========================================
+DÉMARRAGE
+========================================
+*/
+
+displayCards();
+
+</script>
+
+</body>
+</html>
