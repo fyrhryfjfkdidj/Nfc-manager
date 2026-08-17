@@ -2,202 +2,160 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NFC Manager</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    background:#f4f6fa;
+    color:#111827
 }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f6fa;
-    color: #111827;
+header{
+    background:#111827;
+    color:white;
+    padding:20px
 }
 
-header {
-    background: white;
-    padding: 20px;
-    border-bottom: 1px solid #ddd;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+header h1{margin:0 0 5px}
+header p{margin:0;opacity:.7}
+
+main{
+    max-width:1100px;
+    margin:auto;
+    padding:18px
 }
 
-header h1 {
-    margin: 0;
+.hidden{display:none!important}
+
+.card-box{
+    background:white;
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:15px;
+    box-shadow:0 2px 10px #0000000d
 }
 
-header p {
-    margin: 5px 0 0;
-    color: #6b7280;
+input,textarea,button{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    font-size:15px
 }
 
-.stats {
-    display: flex;
-    gap: 10px;
-    padding: 15px;
-    overflow-x: auto;
+input,textarea{
+    border:1px solid #d1d5db;
+    margin:6px 0 12px
 }
 
-.stat {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    min-width: 120px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+textarea{min-height:90px}
+
+button{
+    border:0;
+    background:#2563eb;
+    color:white;
+    font-weight:600;
+    margin-top:8px;
+    cursor:pointer
 }
 
-.stat strong {
-    display: block;
-    font-size: 25px;
-    margin-top: 5px;
+button.secondary{background:#374151}
+
+button.danger{background:#dc2626}
+
+button.small{
+    width:auto;
+    padding:8px 12px
 }
 
-#cards {
-    padding: 15px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+.error{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:12px
 }
 
-.card {
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 15px;
-    padding: 18px;
-    min-height: 120px;
-    cursor: pointer;
-    transition: 0.15s;
+.success{
+    background:#dcfce7;
+    color:#166534;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:12px
 }
 
-.card:hover {
-    transform: translateY(-2px);
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px
 }
 
-.card.used {
-    background: #eaf3ff;
-    border-color: #2563eb;
+.nfc{
+    background:white;
+    border:2px solid #d1d5db;
+    border-radius:15px;
+    padding:16px;
+    min-height:130px
 }
 
-.card-number {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
+.nfc.used{
+    border-color:#2563eb;
+    background:#eff6ff
 }
 
-.status {
-    font-size: 13px;
-    padding: 5px 9px;
-    border-radius: 20px;
-    display: inline-block;
-    background: #e5e7eb;
+.nfc h3{
+    margin:0 0 12px
 }
 
-.used .status {
-    background: #2563eb;
-    color: white;
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    background:#e5e7eb;
+    font-size:12px
 }
 
-.shop {
-    margin-top: 10px;
-    font-size: 13px;
-    color: #6b7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.used .badge{
+    background:#2563eb;
+    color:white
 }
 
-/* PAGE GESTION */
-
-#management {
-    display: none;
-    padding: 20px;
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:15px
 }
 
-.back {
-    border: none;
-    background: white;
-    padding: 10px 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-bottom: 20px;
+.stat{
+    background:white;
+    padding:15px;
+    border-radius:14px;
+    text-align:center
 }
 
-.panel {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
+.stat strong{
+    display:block;
+    font-size:25px;
+    margin-top:5px
 }
 
-.panel h2 {
-    margin-top: 0;
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px
 }
 
-label {
-    display: block;
-    font-weight: bold;
-    margin-top: 15px;
-    margin-bottom: 6px;
-}
-
-input,
-textarea,
-select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
-    font-size: 15px;
-}
-
-textarea {
-    min-height: 100px;
-}
-
-button.save {
-    width: 100%;
-    margin-top: 20px;
-    padding: 14px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button.test {
-    width: 100%;
-    margin-top: 10px;
-    padding: 14px;
-    background: #111827;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-button.reset {
-    width: 100%;
-    margin-top: 10px;
-    padding: 12px;
-    background: #fee2e2;
-    color: #b91c1c;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-@media (min-width: 700px) {
-    #cards {
-        grid-template-columns: repeat(5, 1fr);
-    }
+@media(min-width:700px){
+    .grid{grid-template-columns:repeat(4,1fr)}
 }
 </style>
 </head>
@@ -205,447 +163,976 @@ button.reset {
 <body>
 
 <header>
-    <h1>📱 NFC Manager</h1>
-    <p>Gestion de tes cartes NFC</p>
+<h1>📱 NFC Manager</h1>
+<p>Gestion de tes cartes NFC</p>
 </header>
 
-<div id="home">
+<main>
 
-    <div class="stats">
+<!-- ================= CONNEXION ================= -->
 
-        <div class="stat">
-            Total
-            <strong id="total">100</strong>
-        </div>
+<section id="loginPage">
 
-        <div class="stat">
-            Utilisées
-            <strong id="used">0</strong>
-        </div>
+<div class="card-box">
 
-        <div class="stat">
-            Disponibles
-            <strong id="free">100</strong>
-        </div>
+<h2>🔐 Connexion</h2>
 
-    </div>
+<div id="loginError" class="error hidden"></div>
 
-    <div id="cards"></div>
+<label>Email</label>
+<input
+id="email"
+type="email"
+placeholder="email@example.com"
+>
+
+<label>Mot de passe</label>
+<input
+id="password"
+type="password"
+placeholder="Mot de passe"
+>
+
+<button onclick="login()">
+Se connecter
+</button>
+
+</div>
+
+</section>
+
+
+<!-- ================= ADMIN ================= -->
+
+<section id="adminPage" class="hidden">
+
+<div class="topbar">
+
+<h2>👑 Administration</h2>
+
+<button
+class="small secondary"
+onclick="logout()">
+Déconnexion
+</button>
+
+</div>
+
+<div id="adminMessage"></div>
+
+<div class="stats">
+
+<div class="stat">
+Total
+<strong id="totalCards">0</strong>
+</div>
+
+<div class="stat">
+Utilisées
+<strong id="usedCards">0</strong>
+</div>
+
+<div class="stat">
+Disponibles
+<strong id="freeCards">0</strong>
+</div>
 
 </div>
 
 
-<div id="management">
+<!-- CREER PROFIL -->
 
-    <button class="back" onclick="goHome()">
-        ← Retour
-    </button>
+<div class="card-box">
 
-    <div class="panel">
+<h2>👤 Créer un profil commerçant</h2>
 
-        <h2 id="managementTitle">
-            Carte #00001
-        </h2>
+<p>
+Entre l'ID du compte Supabase du commerçant.
+</p>
 
-        <label>Nom du commerce</label>
+<label>ID utilisateur</label>
 
-        <input
-            id="shop"
-            placeholder="Ex : Restaurant Mohamed"
-        >
+<input
+id="clientId"
+placeholder="UUID du compte"
+>
 
-        <label>Lien Google</label>
+<label>Nom du commerce</label>
 
-        <input
-            id="link"
-            placeholder="https://g.page/..."
-        >
+<input
+id="businessName"
+placeholder="Ex : Maestro Dunkerque"
+>
 
-        <label>Description</label>
-
-        <textarea
-            id="description"
-            placeholder="Description de la carte..."
-        ></textarea>
-
-        <label>Statut</label>
-
-        <select id="status">
-
-            <option value="free">
-                ⚪ Disponible
-            </option>
-
-            <option value="used">
-                🔵 Utilisée
-            </option>
-
-        </select>
-
-        <button class="save" onclick="saveCard()">
-            💾 Enregistrer
-        </button>
-
-        <button class="test" onclick="testLink()">
-            🔗 Tester le lien
-        </button>
-
-        <button class="reset" onclick="resetCard()">
-            Réinitialiser la carte
-        </button>
-
-    </div>
+<button onclick="createClientProfile()">
+Créer le profil
+</button>
 
 </div>
+
+
+<!-- ATTRIBUER CARTE -->
+
+<div class="card-box">
+
+<h2>🎫 Attribuer une carte</h2>
+
+<label>Numéro de carte</label>
+
+<input
+id="assignCardId"
+type="number"
+min="1"
+max="100"
+placeholder="Ex : 1"
+>
+
+<label>ID du commerçant</label>
+
+<input
+id="assignOwnerId"
+placeholder="UUID du commerçant"
+>
+
+<button onclick="assignCard()">
+Attribuer la carte
+</button>
+
+</div>
+
+
+<!-- TOUTES LES CARTES -->
+
+<div class="card-box">
+
+<h2>🎫 Toutes les cartes</h2>
+
+<div
+id="adminCards"
+class="grid">
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= CLIENT ================= -->
+
+<section id="clientPage" class="hidden">
+
+<div class="topbar">
+
+<h2 id="clientName">
+🏪 Mon espace
+</h2>
+
+<button
+class="small secondary"
+onclick="logout()">
+Déconnexion
+</button>
+
+</div>
+
+<div id="clientMessage"></div>
+
+<div class="card-box">
+
+<h2>🎫 Mes cartes</h2>
+
+<div
+id="clientCards"
+class="grid">
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= NFC PUBLIC ================= -->
+
+<section id="nfcPage" class="hidden">
+
+<div
+class="card-box"
+style="text-align:center">
+
+<h2 id="nfcShop">
+📱 NFC Manager
+</h2>
+
+<p id="nfcDescription">
+Chargement...
+</p>
+
+</div>
+
+</section>
+
+</main>
 
 
 <script>
 
-/*
-========================================
-CRÉATION DES 100 CARTES
-========================================
-*/
+/* =====================================================
+   SUPABASE
+===================================================== */
 
-let cards = JSON.parse(
-    localStorage.getItem("nfcCards")
+const SUPABASE_URL =
+"https://epkgzolkmzjyfexhjons.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_h_A5w3Kxi2G1xaMVdG8o4Q_CR2g4iAq";
+
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
-if (!cards) {
 
-    cards = [];
+/* =====================================================
+   OUTILS
+===================================================== */
 
-    for (let i = 1; i <= 100; i++) {
+function show(id){
+    document.getElementById(id)
+    .classList.remove("hidden");
+}
 
-        cards.push({
+function hide(id){
+    document.getElementById(id)
+    .classList.add("hidden");
+}
 
-            id: i,
+function message(id,text,type="success"){
 
-            shop: "",
+    const el =
+        document.getElementById(id);
 
-            link: "",
+    el.className = type;
+    el.textContent = text;
+}
 
-            description: "",
 
-            status: "free"
+/* =====================================================
+   CONNEXION
+===================================================== */
 
-        });
+async function login(){
 
+    const email =
+        document.getElementById("email")
+        .value.trim();
+
+    const password =
+        document.getElementById("password")
+        .value;
+
+    hide("loginError");
+
+    if(!email || !password){
+
+        message(
+            "loginError",
+            "Entre ton email et ton mot de passe.",
+            "error"
+        );
+
+        return;
     }
 
-    saveDatabase();
+    const {data,error} =
+        await supabaseClient.auth
+        .signInWithPassword({
+            email:email,
+            password:password
+        });
+
+    if(error){
+
+        message(
+            "loginError",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    await loadUser();
 }
 
 
-/*
-========================================
-CARTE ACTUELLEMENT OUVERTE
-========================================
-*/
+/* =====================================================
+   DECONNEXION
+===================================================== */
 
-let currentCard = null;
+async function logout(){
 
+    await supabaseClient.auth.signOut();
 
-/*
-========================================
-SAUVEGARDE
-========================================
-*/
+    hide("adminPage");
+    hide("clientPage");
 
-function saveDatabase() {
-
-    localStorage.setItem(
-        "nfcCards",
-        JSON.stringify(cards)
-    );
-
+    show("loginPage");
 }
 
 
-/*
-========================================
-AFFICHER LES CARTES
-========================================
-*/
+/* =====================================================
+   UTILISATEUR
+===================================================== */
 
-function displayCards() {
+async function loadUser(){
 
-    const container =
-        document.getElementById("cards");
+    const {
+        data:{user}
+    } =
+        await supabaseClient.auth
+        .getUser();
 
-    container.innerHTML = "";
+    if(!user){
 
-    cards.forEach(card => {
+        show("loginPage");
 
-        const element =
-            document.createElement("div");
-
-        element.className = "card";
-
-        if (card.status === "used") {
-
-            element.classList.add("used");
-
-        }
-
-        const number =
-            String(card.id).padStart(5, "0");
-
-        element.innerHTML = `
-
-            <div class="card-number">
-                #${number}
-            </div>
-
-            <span class="status">
-
-                ${
-                    card.status === "used"
-                    ? "🔵 Utilisée"
-                    : "⚪ Disponible"
-                }
-
-            </span>
-
-            <div class="shop">
-
-                ${
-                    card.shop
-                    ? card.shop
-                    : "Aucun commerce"
-                }
-
-            </div>
-
-        `;
-
-        element.onclick = function () {
-
-            openCard(card.id);
-
-        };
-
-        container.appendChild(element);
-
-    });
+        return;
+    }
 
 
-    updateStats();
+    const {data:profile,error} =
+        await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id",user.id)
+        .single();
 
+
+    if(error){
+
+        message(
+            "loginError",
+            "Profil introuvable.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    hide("loginPage");
+
+
+    if(profile.role === "admin"){
+
+        show("adminPage");
+
+        await loadAdmin();
+
+    }else{
+
+        show("clientPage");
+
+        document.getElementById(
+            "clientName"
+        ).textContent =
+            "🏪 " +
+            (
+                profile.business_name ||
+                "Mon espace"
+            );
+
+        await loadClient(user.id);
+    }
 }
 
 
-/*
-========================================
-STATISTIQUES
-========================================
-*/
+/* =====================================================
+   ADMIN — CHARGER LES CARTES
+===================================================== */
 
-function updateStats() {
+async function loadAdmin(){
+
+    const {data:cards,error} =
+        await supabaseClient
+        .from("nfc_cards")
+        .select("*")
+        .order("id");
+
+
+    if(error){
+
+        message(
+            "adminMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
 
     const used =
         cards.filter(
-            card => card.status === "used"
+            c => c.status === "used"
         ).length;
-
-    document.getElementById("total")
-        .textContent = cards.length;
-
-    document.getElementById("used")
-        .textContent = used;
-
-    document.getElementById("free")
-        .textContent =
-            cards.length - used;
-
-}
-
-
-/*
-========================================
-OUVRIR UNE CARTE
-========================================
-*/
-
-function openCard(id) {
-
-    currentCard =
-        cards.find(card => card.id === id);
-
-    document.getElementById("home")
-        .style.display = "none";
-
-    document.getElementById("management")
-        .style.display = "block";
-
-
-    const number =
-        String(currentCard.id)
-        .padStart(5, "0");
 
 
     document.getElementById(
-        "managementTitle"
+        "totalCards"
     ).textContent =
-        "Carte #" + number;
+        cards.length;
 
 
-    document.getElementById("shop")
-        .value =
-        currentCard.shop;
+    document.getElementById(
+        "usedCards"
+    ).textContent =
+        used;
 
 
-    document.getElementById("link")
-        .value =
-        currentCard.link;
+    document.getElementById(
+        "freeCards"
+    ).textContent =
+        cards.length - used;
 
 
-    document.getElementById("description")
-        .value =
-        currentCard.description;
+    const container =
+        document.getElementById(
+            "adminCards"
+        );
 
 
-    document.getElementById("status")
-        .value =
-        currentCard.status;
+    container.innerHTML = "";
 
+
+    cards.forEach(card => {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "nfc " +
+            (
+                card.status === "used"
+                ? "used"
+                : ""
+            );
+
+
+        const number =
+            String(card.id)
+            .padStart(5,"0");
+
+
+        div.innerHTML = `
+
+            <h3>#${number}</h3>
+
+            <span class="badge">
+
+            ${
+                card.status === "used"
+                ? "🔵 Utilisée"
+                : "⚪ Disponible"
+            }
+
+            </span>
+
+            <p>
+            ${
+                card.shop_name ||
+                "Aucun commerce"
+            }
+            </p>
+
+            <small>
+            ${
+                card.owner_id
+                ? "👤 Attribuée"
+                : "📦 Disponible"
+            }
+            </small>
+
+        `;
+
+
+        container.appendChild(div);
+
+    });
 }
 
 
-/*
-========================================
-ENREGISTRER
-========================================
-*/
+/* =====================================================
+   CREER PROFIL CLIENT
+===================================================== */
 
-function saveCard() {
+async function createClientProfile(){
 
-    if (!currentCard) return;
-
-
-    currentCard.shop =
-        document.getElementById("shop")
-        .value;
+    const id =
+        document.getElementById(
+            "clientId"
+        ).value.trim();
 
 
-    currentCard.link =
-        document.getElementById("link")
-        .value;
+    const name =
+        document.getElementById(
+            "businessName"
+        ).value.trim();
 
 
-    currentCard.description =
-        document.getElementById("description")
-        .value;
+    if(!id || !name){
 
-
-    currentCard.status =
-        document.getElementById("status")
-        .value;
-
-
-    saveDatabase();
-
-
-    alert("✅ Carte enregistrée !");
-
-
-    displayCards();
-
-}
-
-
-/*
-========================================
-TESTER LE LIEN
-========================================
-*/
-
-function testLink() {
-
-    const link =
-        document.getElementById("link")
-        .value;
-
-
-    if (!link) {
-
-        alert("⚠️ Aucun lien renseigné.");
+        message(
+            "adminMessage",
+            "Remplis tous les champs.",
+            "error"
+        );
 
         return;
+    }
+
+
+    const {error} =
+        await supabaseClient
+        .rpc(
+            "create_client_profile",
+            {
+                client_id:id,
+                client_business_name:name
+            }
+        );
+
+
+    if(error){
+
+        message(
+            "adminMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    message(
+        "adminMessage",
+        "✅ Profil commerçant créé !"
+    );
+
+
+    document.getElementById(
+        "clientId"
+    ).value = "";
+
+
+    document.getElementById(
+        "businessName"
+    ).value = "";
+}
+
+
+/* =====================================================
+   ATTRIBUER CARTE
+===================================================== */
+
+async function assignCard(){
+
+    const id =
+        Number(
+            document.getElementById(
+                "assignCardId"
+            ).value
+        );
+
+
+    const owner =
+        document.getElementById(
+            "assignOwnerId"
+        ).value.trim();
+
+
+    if(!id || !owner){
+
+        message(
+            "adminMessage",
+            "Remplis tous les champs.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const {error} =
+        await supabaseClient
+        .from("nfc_cards")
+        .update({
+            owner_id:owner
+        })
+        .eq("id",id);
+
+
+    if(error){
+
+        message(
+            "adminMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    message(
+        "adminMessage",
+        "✅ Carte attribuée !"
+    );
+
+
+    document.getElementById(
+        "assignCardId"
+    ).value = "";
+
+
+    document.getElementById(
+        "assignOwnerId"
+    ).value = "";
+
+
+    await loadAdmin();
+}
+
+
+/* =====================================================
+   CLIENT — CARTES
+===================================================== */
+
+async function loadClient(userId){
+
+    const {data:cards,error} =
+        await supabaseClient
+        .from("nfc_cards")
+        .select("*")
+        .eq("owner_id",userId)
+        .order("id");
+
+
+    if(error){
+
+        message(
+            "clientMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    const container =
+        document.getElementById(
+            "clientCards"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if(!cards.length){
+
+        container.innerHTML =
+            "<p>Aucune carte attribuée.</p>";
+
+        return;
+    }
+
+
+    cards.forEach(card => {
+
+        const div =
+            document.createElement("div");
+
+
+        div.className =
+            "nfc " +
+            (
+                card.status === "used"
+                ? "used"
+                : ""
+            );
+
+
+        const number =
+            String(card.id)
+            .padStart(5,"0");
+
+
+        div.innerHTML = `
+
+            <h3>#${number}</h3>
+
+            <span class="badge">
+
+            ${
+                card.status === "used"
+                ? "🔵 Utilisée"
+                : "⚪ Disponible"
+            }
+
+            </span>
+
+            <p>
+            ${
+                card.shop_name ||
+                "Commerce non configuré"
+            }
+            </p>
+
+            <button
+            onclick="editCard(${card.id})">
+
+            ✏️ Modifier
+
+            </button>
+
+        `;
+
+
+        container.appendChild(div);
+
+    });
+}
+
+
+/* =====================================================
+   MODIFIER CARTE
+===================================================== */
+
+async function editCard(id){
+
+    const {data:card,error} =
+        await supabaseClient
+        .from("nfc_cards")
+        .select("*")
+        .eq("id",id)
+        .single();
+
+
+    if(error){
+
+        alert(error.message);
+
+        return;
+    }
+
+
+    const shop =
+        prompt(
+            "Nom du commerce :",
+            card.shop_name || ""
+        );
+
+
+    if(shop === null)return;
+
+
+    const link =
+        prompt(
+            "Lien Google Avis :",
+            card.google_review_url || ""
+        );
+
+
+    if(link === null)return;
+
+
+    const description =
+        prompt(
+            "Description :",
+            card.description || ""
+        );
+
+
+    if(description === null)return;
+
+
+    const {error:updateError} =
+        await supabaseClient
+        .from("nfc_cards")
+        .update({
+
+            shop_name:shop,
+
+            google_review_url:link,
+
+            description:description,
+
+            status:"used",
+
+            updated_at:
+                new Date().toISOString()
+
+        })
+        .eq("id",id);
+
+
+    if(updateError){
+
+        alert(updateError.message);
+
+        return;
+    }
+
+
+    alert(
+        "✅ Carte enregistrée !"
+    );
+
+
+    const {
+        data:{user}
+    } =
+        await supabaseClient.auth
+        .getUser();
+
+
+    await loadClient(user.id);
+}
+
+
+/* =====================================================
+   PAGE PUBLIQUE NFC
+===================================================== */
+
+async function loadNFC(){
+
+    const path =
+        window.location.pathname;
+
+
+    const match =
+        path.match(
+            /\/c\/(\d+)/
+        );
+
+
+    if(!match)return false;
+
+
+    const id =
+        Number(match[1]);
+
+
+    hide("loginPage");
+    hide("adminPage");
+    hide("clientPage");
+
+    show("nfcPage");
+
+
+    const {data:card,error} =
+        await supabaseClient
+        .from("nfc_cards")
+        .select(
+            "id,shop_name,google_review_url,description"
+        )
+        .eq("id",id)
+        .single();
+
+
+    if(error || !card){
+
+        document.getElementById(
+            "nfcShop"
+        ).textContent =
+            "❌ Carte introuvable";
+
+
+        document.getElementById(
+            "nfcDescription"
+        ).textContent =
+            "Cette carte n'existe pas.";
+
+
+        return true;
+    }
+
+
+    document.getElementById(
+        "nfcShop"
+    ).textContent =
+        card.shop_name ||
+        "NFC Manager";
+
+
+    document.getElementById(
+        "nfcDescription"
+    ).textContent =
+        card.description ||
+        "Redirection vers Google...";
+
+
+    if(card.google_review_url){
+
+        setTimeout(
+            function(){
+
+                window.location.href =
+                    card.google_review_url;
+
+            },
+            1200
+        );
+
+    }else{
+
+        document.getElementById(
+            "nfcDescription"
+        ).textContent =
+            "Cette carte n'est pas encore configurée.";
 
     }
 
 
-    window.open(link, "_blank");
-
+    return true;
 }
 
 
-/*
-========================================
-RÉINITIALISER
-========================================
-*/
+/* =====================================================
+   DEMARRAGE
+===================================================== */
 
-function resetCard() {
+(async function(){
 
-    if (!currentCard) return;
-
-
-    const confirmation =
-        confirm(
-            "Réinitialiser cette carte ?"
-        );
+    const isNFC =
+        await loadNFC();
 
 
-    if (!confirmation) return;
+    if(isNFC)return;
 
 
-    currentCard.shop = "";
-
-    currentCard.link = "";
-
-    currentCard.description = "";
-
-    currentCard.status = "free";
-
-
-    saveDatabase();
+    const {
+        data:{session}
+    } =
+        await supabaseClient
+        .auth
+        .getSession();
 
 
-    openCard(currentCard.id);
+    if(session){
 
-    displayCards();
+        await loadUser();
 
-}
+    }else{
 
+        show("loginPage");
 
-/*
-========================================
-RETOUR
-========================================
-*/
+    }
 
-function goHome() {
-
-    document.getElementById("management")
-        .style.display = "none";
-
-    document.getElementById("home")
-        .style.display = "block";
-
-    displayCards();
-
-}
-
-
-/*
-========================================
-DÉMARRAGE
-========================================
-*/
-
-displayCards();
+})();
 
 </script>
 
