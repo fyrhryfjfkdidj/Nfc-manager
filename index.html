@@ -8,53 +8,68 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
     background:#f4f6fa;
-    color:#111827
+    color:#111827;
 }
 
 header{
     background:#111827;
     color:white;
-    padding:20px
+    padding:20px;
 }
 
-header h1{margin:0 0 5px}
-header p{margin:0;opacity:.7}
+header h1{
+    margin:0 0 5px;
+}
+
+header p{
+    margin:0;
+    opacity:.7;
+}
 
 main{
     max-width:1100px;
     margin:auto;
-    padding:18px
+    padding:18px;
 }
 
-.hidden{display:none!important}
+.hidden{
+    display:none!important;
+}
 
 .card-box{
     background:white;
     border-radius:16px;
     padding:18px;
     margin-bottom:15px;
-    box-shadow:0 2px 10px #0000000d
+    box-shadow:0 2px 10px #0000000d;
 }
 
-input,textarea,button{
+input,
+textarea,
+button{
     width:100%;
     padding:12px;
     border-radius:10px;
-    font-size:15px
+    font-size:15px;
 }
 
-input,textarea{
+input,
+textarea{
     border:1px solid #d1d5db;
-    margin:6px 0 12px
+    margin:6px 0 12px;
 }
 
-textarea{min-height:90px}
+textarea{
+    min-height:100px;
+}
 
 button{
     border:0;
@@ -62,16 +77,20 @@ button{
     color:white;
     font-weight:600;
     margin-top:8px;
-    cursor:pointer
+    cursor:pointer;
 }
 
-button.secondary{background:#374151}
+button.secondary{
+    background:#374151;
+}
 
-button.danger{background:#dc2626}
+button.danger{
+    background:#dc2626;
+}
 
 button.small{
     width:auto;
-    padding:8px 12px
+    padding:8px 12px;
 }
 
 .error{
@@ -79,7 +98,7 @@ button.small{
     color:#991b1b;
     padding:12px;
     border-radius:10px;
-    margin-bottom:12px
+    margin-bottom:12px;
 }
 
 .success{
@@ -87,13 +106,13 @@ button.small{
     color:#166534;
     padding:12px;
     border-radius:10px;
-    margin-bottom:12px
+    margin-bottom:12px;
 }
 
 .grid{
     display:grid;
     grid-template-columns:repeat(2,1fr);
-    gap:12px
+    gap:12px;
 }
 
 .nfc{
@@ -101,16 +120,16 @@ button.small{
     border:2px solid #d1d5db;
     border-radius:15px;
     padding:16px;
-    min-height:130px
+    min-height:150px;
 }
 
 .nfc.used{
     border-color:#2563eb;
-    background:#eff6ff
+    background:#eff6ff;
 }
 
 .nfc h3{
-    margin:0 0 12px
+    margin:0 0 12px;
 }
 
 .badge{
@@ -118,32 +137,32 @@ button.small{
     padding:5px 9px;
     border-radius:20px;
     background:#e5e7eb;
-    font-size:12px
+    font-size:12px;
 }
 
 .used .badge{
     background:#2563eb;
-    color:white
+    color:white;
 }
 
 .stats{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:10px;
-    margin-bottom:15px
+    margin-bottom:15px;
 }
 
 .stat{
     background:white;
     padding:15px;
     border-radius:14px;
-    text-align:center
+    text-align:center;
 }
 
 .stat strong{
     display:block;
     font-size:25px;
-    margin-top:5px
+    margin-top:5px;
 }
 
 .topbar{
@@ -151,11 +170,40 @@ button.small{
     justify-content:space-between;
     align-items:center;
     gap:10px;
-    margin-bottom:15px
+    margin-bottom:15px;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:#0008;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:1000;
+}
+
+.modal-box{
+    width:100%;
+    max-width:500px;
+    background:white;
+    border-radius:18px;
+    padding:20px;
+}
+
+.modal-box h2{
+    margin-top:0;
+}
+
+.close{
+    background:#6b7280;
 }
 
 @media(min-width:700px){
-    .grid{grid-template-columns:repeat(4,1fr)}
+    .grid{
+        grid-template-columns:repeat(4,1fr);
+    }
 }
 </style>
 </head>
@@ -163,13 +211,13 @@ button.small{
 <body>
 
 <header>
-<h1>📱 NFC Manager</h1>
-<p>Gestion de tes cartes NFC</p>
+    <h1>📱 NFC Manager</h1>
+    <p>Gestion de tes cartes NFC</p>
 </header>
 
 <main>
 
-<!-- ================= CONNEXION ================= -->
+<!-- ================= LOGIN ================= -->
 
 <section id="loginPage">
 
@@ -180,21 +228,23 @@ button.small{
 <div id="loginError" class="error hidden"></div>
 
 <label>Email</label>
+
 <input
-id="email"
-type="email"
-placeholder="email@example.com"
+    id="email"
+    type="email"
+    placeholder="email@example.com"
 >
 
 <label>Mot de passe</label>
+
 <input
-id="password"
-type="password"
-placeholder="Mot de passe"
+    id="password"
+    type="password"
+    placeholder="Mot de passe"
 >
 
 <button onclick="login()">
-Se connecter
+    Se connecter
 </button>
 
 </div>
@@ -211,9 +261,9 @@ Se connecter
 <h2>👑 Administration</h2>
 
 <button
-class="small secondary"
-onclick="logout()">
-Déconnexion
+    class="small secondary"
+    onclick="logout()">
+    Déconnexion
 </button>
 
 </div>
@@ -240,76 +290,66 @@ Disponibles
 </div>
 
 
-<!-- CREER PROFIL -->
-
 <div class="card-box">
 
-<h2>👤 Créer un profil commerçant</h2>
+<h2>👤 Profil commerçant</h2>
 
-<p>
-Entre l'ID du compte Supabase du commerçant.
-</p>
-
-<label>ID utilisateur</label>
+<label>UUID du commerçant</label>
 
 <input
-id="clientId"
-placeholder="UUID du compte"
+    id="clientId"
+    placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 >
 
 <label>Nom du commerce</label>
 
 <input
-id="businessName"
-placeholder="Ex : Maestro Dunkerque"
+    id="businessName"
+    placeholder="Ex : Maestro Dunkerque"
 >
 
 <button onclick="createClientProfile()">
-Créer le profil
+    Créer / modifier le profil
 </button>
 
 </div>
 
-
-<!-- ATTRIBUER CARTE -->
 
 <div class="card-box">
 
 <h2>🎫 Attribuer une carte</h2>
 
-<label>Numéro de carte</label>
+<label>ID de la carte</label>
 
 <input
-id="assignCardId"
-type="number"
-min="1"
-max="100"
-placeholder="Ex : 1"
+    id="assignCardId"
+    type="number"
+    min="1"
+    max="100"
+    placeholder="Ex : 1"
 >
 
-<label>ID du commerçant</label>
+<label>UUID du commerçant</label>
 
 <input
-id="assignOwnerId"
-placeholder="UUID du commerçant"
+    id="assignOwnerId"
+    placeholder="UUID du commerçant"
 >
 
 <button onclick="assignCard()">
-Attribuer la carte
+    Attribuer la carte
 </button>
 
 </div>
 
-
-<!-- TOUTES LES CARTES -->
 
 <div class="card-box">
 
 <h2>🎫 Toutes les cartes</h2>
 
 <div
-id="adminCards"
-class="grid">
+    id="adminCards"
+    class="grid">
 </div>
 
 </div>
@@ -328,9 +368,9 @@ class="grid">
 </h2>
 
 <button
-class="small secondary"
-onclick="logout()">
-Déconnexion
+    class="small secondary"
+    onclick="logout()">
+    Déconnexion
 </button>
 
 </div>
@@ -342,8 +382,8 @@ Déconnexion
 <h2>🎫 Mes cartes</h2>
 
 <div
-id="clientCards"
-class="grid">
+    id="clientCards"
+    class="grid">
 </div>
 
 </div>
@@ -356,8 +396,8 @@ class="grid">
 <section id="nfcPage" class="hidden">
 
 <div
-class="card-box"
-style="text-align:center">
+    class="card-box"
+    style="text-align:center">
 
 <h2 id="nfcShop">
 📱 NFC Manager
@@ -370,6 +410,56 @@ Chargement...
 </div>
 
 </section>
+
+
+<!-- ================= MODIFICATION CARTE ================= -->
+
+<div
+    id="editModal"
+    class="modal hidden">
+
+<div class="modal-box">
+
+<h2>✏️ Modifier la carte</h2>
+
+<div id="editError" class="error hidden"></div>
+
+<label>Nom du commerce</label>
+
+<input
+    id="editShop"
+    placeholder="Ex : Maestro Dunkerque"
+>
+
+<label>Lien Google « Écrire un avis »</label>
+
+<input
+    id="editGoogle"
+    type="url"
+    placeholder="https://..."
+>
+
+<label>Description</label>
+
+<textarea
+    id="editDescription"
+    placeholder="Description du commerce">
+</textarea>
+
+<button onclick="saveCard()">
+    💾 Enregistrer
+</button>
+
+<button
+    class="close"
+    onclick="closeEdit()">
+    Annuler
+</button>
+
+</div>
+
+</div>
+
 
 </main>
 
@@ -394,44 +484,72 @@ supabase.createClient(
 
 
 /* =====================================================
-   OUTILS
+   VARIABLE CARTE EN COURS
+===================================================== */
+
+let editingCardId = null;
+
+
+/* =====================================================
+   AFFICHAGE
 ===================================================== */
 
 function show(id){
-    document.getElementById(id)
-    .classList.remove("hidden");
-}
 
-function hide(id){
-    document.getElementById(id)
-    .classList.add("hidden");
-}
-
-function message(id,text,type="success"){
-
-    const el =
+    const element =
         document.getElementById(id);
 
-    el.className = type;
-    el.textContent = text;
+    if(element){
+        element.classList.remove("hidden");
+    }
+}
+
+
+function hide(id){
+
+    const element =
+        document.getElementById(id);
+
+    if(element){
+        element.classList.add("hidden");
+    }
+}
+
+
+function message(
+    id,
+    text,
+    type="success"
+){
+
+    const element =
+        document.getElementById(id);
+
+    if(!element)return;
+
+    element.className = type;
+    element.textContent = text;
 }
 
 
 /* =====================================================
-   CONNEXION
+   LOGIN
 ===================================================== */
 
 async function login(){
 
     const email =
-        document.getElementById("email")
-        .value.trim();
+        document.getElementById(
+            "email"
+        ).value.trim();
 
     const password =
-        document.getElementById("password")
-        .value;
+        document.getElementById(
+            "password"
+        ).value;
 
     hide("loginError");
+
 
     if(!email || !password){
 
@@ -444,12 +562,17 @@ async function login(){
         return;
     }
 
-    const {data,error} =
+
+    const {error} =
         await supabaseClient.auth
         .signInWithPassword({
+
             email:email,
+
             password:password
+
         });
+
 
     if(error){
 
@@ -462,12 +585,13 @@ async function login(){
         return;
     }
 
+
     await loadUser();
 }
 
 
 /* =====================================================
-   DECONNEXION
+   LOGOUT
 ===================================================== */
 
 async function logout(){
@@ -476,13 +600,14 @@ async function logout(){
 
     hide("adminPage");
     hide("clientPage");
+    hide("nfcPage");
 
     show("loginPage");
 }
 
 
 /* =====================================================
-   UTILISATEUR
+   CHARGER UTILISATEUR
 ===================================================== */
 
 async function loadUser(){
@@ -493,6 +618,7 @@ async function loadUser(){
         await supabaseClient.auth
         .getUser();
 
+
     if(!user){
 
         show("loginPage");
@@ -501,15 +627,30 @@ async function loadUser(){
     }
 
 
-    const {data:profile,error} =
+    const {
+        data:profile,
+        error
+    } =
         await supabaseClient
         .from("profiles")
         .select("*")
         .eq("id",user.id)
-        .single();
+        .maybeSingle();
 
 
     if(error){
+
+        message(
+            "loginError",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!profile){
 
         message(
             "loginError",
@@ -526,11 +667,15 @@ async function loadUser(){
 
     if(profile.role === "admin"){
 
+        hide("clientPage");
+
         show("adminPage");
 
         await loadAdmin();
 
     }else{
+
+        hide("adminPage");
 
         show("clientPage");
 
@@ -543,18 +688,22 @@ async function loadUser(){
                 "Mon espace"
             );
 
+
         await loadClient(user.id);
     }
 }
 
 
 /* =====================================================
-   ADMIN — CHARGER LES CARTES
+   ADMIN : CARTES
 ===================================================== */
 
 async function loadAdmin(){
 
-    const {data:cards,error} =
+    const {
+        data:cards,
+        error
+    } =
         await supabaseClient
         .from("nfc_cards")
         .select("*")
@@ -575,7 +724,8 @@ async function loadAdmin(){
 
     const used =
         cards.filter(
-            c => c.status === "used"
+            card =>
+                card.status === "used"
         ).length;
 
 
@@ -609,7 +759,10 @@ async function loadAdmin(){
     cards.forEach(card => {
 
         const div =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         div.className =
             "nfc " +
@@ -664,7 +817,7 @@ async function loadAdmin(){
 
 
 /* =====================================================
-   CREER PROFIL CLIENT
+   CREER / MODIFIER PROFIL CLIENT
 ===================================================== */
 
 async function createClientProfile(){
@@ -693,7 +846,9 @@ async function createClientProfile(){
     }
 
 
-    const {error} =
+    const {
+        error
+    } =
         await supabaseClient
         .rpc(
             "create_client_profile",
@@ -718,7 +873,7 @@ async function createClientProfile(){
 
     message(
         "adminMessage",
-        "✅ Profil commerçant créé !"
+        "✅ Profil commerçant enregistré !"
     );
 
 
@@ -765,11 +920,20 @@ async function assignCard(){
     }
 
 
-    const {error} =
+    const {
+        error
+    } =
         await supabaseClient
         .from("nfc_cards")
         .update({
-            owner_id:owner
+
+            owner_id:owner,
+
+            status:"used",
+
+            updated_at:
+                new Date().toISOString()
+
         })
         .eq("id",id);
 
@@ -807,12 +971,15 @@ async function assignCard(){
 
 
 /* =====================================================
-   CLIENT — CARTES
+   CLIENT : CARTES
 ===================================================== */
 
 async function loadClient(userId){
 
-    const {data:cards,error} =
+    const {
+        data:cards,
+        error
+    } =
         await supabaseClient
         .from("nfc_cards")
         .select("*")
@@ -841,10 +1008,10 @@ async function loadClient(userId){
     container.innerHTML = "";
 
 
-    if(!cards.length){
+    if(!cards || cards.length === 0){
 
         container.innerHTML =
-            "<p>Aucune carte attribuée.</p>";
+            "<p>🎫 Aucune carte attribuée.</p>";
 
         return;
     }
@@ -853,7 +1020,9 @@ async function loadClient(userId){
     cards.forEach(card => {
 
         const div =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         div.className =
@@ -892,9 +1061,10 @@ async function loadClient(userId){
             </p>
 
             <button
-            onclick="editCard(${card.id})">
+                type="button"
+                onclick="editCard(${card.id})">
 
-            ✏️ Modifier
+                ✏️ Modifier
 
             </button>
 
@@ -908,12 +1078,18 @@ async function loadClient(userId){
 
 
 /* =====================================================
-   MODIFIER CARTE
+   OUVRIR MODIFICATION
 ===================================================== */
 
 async function editCard(id){
 
-    const {data:card,error} =
+    editingCardId = id;
+
+
+    const {
+        data:card,
+        error
+    } =
         await supabaseClient
         .from("nfc_cards")
         .select("*")
@@ -923,52 +1099,129 @@ async function editCard(id){
 
     if(error){
 
-        alert(error.message);
+        alert(
+            "Erreur : " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    document.getElementById(
+        "editShop"
+    ).value =
+        card.shop_name || "";
+
+
+    document.getElementById(
+        "editGoogle"
+    ).value =
+        card.google_review_url || "";
+
+
+    document.getElementById(
+        "editDescription"
+    ).value =
+        card.description || "";
+
+
+    hide("editError");
+
+    show("editModal");
+}
+
+
+/* =====================================================
+   FERMER MODIFICATION
+===================================================== */
+
+function closeEdit(){
+
+    editingCardId = null;
+
+    hide("editModal");
+}
+
+
+/* =====================================================
+   ENREGISTRER CARTE
+===================================================== */
+
+async function saveCard(){
+
+    if(!editingCardId){
 
         return;
     }
 
 
     const shop =
-        prompt(
-            "Nom du commerce :",
-            card.shop_name || ""
-        );
+        document.getElementById(
+            "editShop"
+        ).value.trim();
 
 
-    if(shop === null)return;
-
-
-    const link =
-        prompt(
-            "Lien Google Avis :",
-            card.google_review_url || ""
-        );
-
-
-    if(link === null)return;
+    const google =
+        document.getElementById(
+            "editGoogle"
+        ).value.trim();
 
 
     const description =
-        prompt(
-            "Description :",
-            card.description || ""
+        document.getElementById(
+            "editDescription"
+        ).value.trim();
+
+
+    if(!shop){
+
+        message(
+            "editError",
+            "Le nom du commerce est obligatoire.",
+            "error"
         );
 
+        return;
+    }
 
-    if(description === null)return;
+
+    if(
+        google &&
+        !(
+            google.startsWith(
+                "https://"
+            ) ||
+            google.startsWith(
+                "http://"
+            )
+        )
+    ){
+
+        message(
+            "editError",
+            "Le lien Google doit commencer par https://",
+            "error"
+        );
+
+        return;
+    }
 
 
-    const {error:updateError} =
+    const {
+        error
+    } =
         await supabaseClient
         .from("nfc_cards")
         .update({
 
             shop_name:shop,
 
-            google_review_url:link,
+            google_review_url:
+                google || null,
 
-            description:description,
+            description:
+                description || null,
 
             status:"used",
 
@@ -976,18 +1229,29 @@ async function editCard(id){
                 new Date().toISOString()
 
         })
-        .eq("id",id);
+        .eq(
+            "id",
+            editingCardId
+        );
 
 
-    if(updateError){
+    if(error){
 
-        alert(updateError.message);
+        message(
+            "editError",
+            error.message,
+            "error"
+        );
 
         return;
     }
 
 
-    alert(
+    closeEdit();
+
+
+    message(
+        "clientMessage",
         "✅ Carte enregistrée !"
     );
 
@@ -999,12 +1263,17 @@ async function editCard(id){
         .getUser();
 
 
-    await loadClient(user.id);
+    if(user){
+
+        await loadClient(
+            user.id
+        );
+    }
 }
 
 
 /* =====================================================
-   PAGE PUBLIQUE NFC
+   PAGE NFC PUBLIQUE
 ===================================================== */
 
 async function loadNFC(){
@@ -1019,7 +1288,10 @@ async function loadNFC(){
         );
 
 
-    if(!match)return false;
+    if(!match){
+
+        return false;
+    }
 
 
     const id =
@@ -1033,7 +1305,10 @@ async function loadNFC(){
     show("nfcPage");
 
 
-    const {data:card,error} =
+    const {
+        data:card,
+        error
+    } =
         await supabaseClient
         .from("nfc_cards")
         .select(
@@ -1111,7 +1386,10 @@ async function loadNFC(){
         await loadNFC();
 
 
-    if(isNFC)return;
+    if(isNFC){
+
+        return;
+    }
 
 
     const {
