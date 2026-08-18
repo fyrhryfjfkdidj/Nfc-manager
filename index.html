@@ -8,7 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
@@ -23,8 +25,14 @@ header{
     padding:20px;
 }
 
-header h1{margin:0 0 5px}
-header p{margin:0;opacity:.7}
+header h1{
+    margin:0 0 5px;
+}
+
+header p{
+    margin:0;
+    opacity:.7;
+}
 
 main{
     max-width:1100px;
@@ -32,7 +40,9 @@ main{
     padding:18px;
 }
 
-.hidden{display:none!important}
+.hidden{
+    display:none!important;
+}
 
 .card-box{
     background:white;
@@ -42,19 +52,24 @@ main{
     box-shadow:0 2px 10px #0000000d;
 }
 
-input,textarea,button{
+input,
+textarea,
+button{
     width:100%;
     padding:12px;
     border-radius:10px;
     font-size:15px;
 }
 
-input,textarea{
+input,
+textarea{
     border:1px solid #d1d5db;
     margin:6px 0 12px;
 }
 
-textarea{min-height:100px}
+textarea{
+    min-height:100px;
+}
 
 button{
     border:0;
@@ -65,10 +80,22 @@ button{
     cursor:pointer;
 }
 
-button.secondary{background:#374151}
-button.danger{background:#dc2626}
-button.small{width:auto;padding:8px 12px}
-button.search-button{background:#111827}
+button.secondary{
+    background:#374151;
+}
+
+button.danger{
+    background:#dc2626;
+}
+
+button.small{
+    width:auto;
+    padding:8px 12px;
+}
+
+button.search-button{
+    background:#111827;
+}
 
 .error{
     background:#fee2e2;
@@ -97,7 +124,7 @@ button.search-button{background:#111827}
     border:2px solid #d1d5db;
     border-radius:15px;
     padding:16px;
-    min-height:220px;
+    min-height:190px;
 }
 
 .nfc.used{
@@ -171,9 +198,13 @@ button.search-button{background:#111827}
     padding:20px;
 }
 
-.modal-box h2{margin-top:0}
+.modal-box h2{
+    margin-top:0;
+}
 
-.close{background:#6b7280}
+.close{
+    background:#6b7280;
+}
 
 .search-box{
     background:#f3f4f6;
@@ -224,22 +255,32 @@ button.search-button{background:#111827}
 
 .admin-card-info p{
     margin:4px 0;
-    word-break:break-word;
-}
-
-.owner-id{
-    font-size:11px;
-    color:#6b7280;
-    background:#f3f4f6;
-    padding:7px;
-    border-radius:8px;
-    margin-top:8px;
 }
 
 .empty{
     text-align:center;
     padding:25px;
     color:#6b7280;
+}
+
+.auth-switch{
+    text-align:center;
+    margin-top:15px;
+    color:#6b7280;
+}
+
+.auth-switch button{
+    background:none;
+    color:#2563eb;
+    width:auto;
+    padding:0;
+    margin:0;
+}
+
+hr{
+    border:0;
+    border-top:1px solid #e5e7eb;
+    margin:20px 0;
 }
 
 @media(min-width:700px){
@@ -259,7 +300,9 @@ button.search-button{background:#111827}
 
 <main>
 
-<!-- ================= LOGIN ================= -->
+<!-- =====================================================
+     CONNEXION
+===================================================== -->
 
 <section id="loginPage">
 
@@ -289,12 +332,81 @@ button.search-button{background:#111827}
     Se connecter
 </button>
 
+<div class="auth-switch">
+    Pas encore de compte ?
+    <button onclick="showSignup()">
+        Créer un compte
+    </button>
+</div>
+
 </div>
 
 </section>
 
 
-<!-- ================= ADMIN ================= -->
+<!-- =====================================================
+     CREATION COMPTE
+===================================================== -->
+
+<section id="signupPage" class="hidden">
+
+<div class="card-box">
+
+<h2>👤 Créer un compte</h2>
+
+<div id="signupMessage"></div>
+
+<label>Nom du commerce</label>
+
+<input
+    id="signupBusiness"
+    type="text"
+    placeholder="Ex : Maestro Dunkerque"
+>
+
+<label>Email</label>
+
+<input
+    id="signupEmail"
+    type="email"
+    placeholder="email@example.com"
+>
+
+<label>Mot de passe</label>
+
+<input
+    id="signupPassword"
+    type="password"
+    placeholder="Minimum 6 caractères"
+>
+
+<label>Confirmer le mot de passe</label>
+
+<input
+    id="signupPasswordConfirm"
+    type="password"
+    placeholder="Retape ton mot de passe"
+>
+
+<button onclick="signup()">
+    🚀 Créer mon compte
+</button>
+
+<div class="auth-switch">
+    Déjà un compte ?
+    <button onclick="showLogin()">
+        Se connecter
+    </button>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ADMIN
+===================================================== -->
 
 <section id="adminPage" class="hidden">
 
@@ -315,18 +427,18 @@ button.search-button{background:#111827}
 <div class="stats">
 
 <div class="stat">
-    Total
-    <strong id="totalCards">0</strong>
+Total
+<strong id="totalCards">0</strong>
 </div>
 
 <div class="stat">
-    Utilisées
-    <strong id="usedCards">0</strong>
+Utilisées
+<strong id="usedCards">0</strong>
 </div>
 
 <div class="stat">
-    Disponibles
-    <strong id="freeCards">0</strong>
+Disponibles
+<strong id="freeCards">0</strong>
 </div>
 
 </div>
@@ -342,7 +454,7 @@ button.search-button{background:#111827}
 
 <input
     id="clientId"
-    placeholder="UUID du commerçant"
+    placeholder="UUID du compte commerçant"
 >
 
 <label>Nom du commerce</label>
@@ -382,7 +494,7 @@ button.search-button{background:#111827}
 >
 
 <button onclick="assignCard()">
-    Attribuer la carte
+    🎫 Attribuer la carte
 </button>
 
 </div>
@@ -405,14 +517,19 @@ button.search-button{background:#111827}
 
 </div>
 
-<div id="adminCards" class="grid"></div>
+<div
+    id="adminCards"
+    class="grid">
+</div>
 
 </div>
 
 </section>
 
 
-<!-- ================= CLIENT ================= -->
+<!-- =====================================================
+     CLIENT
+===================================================== -->
 
 <section id="clientPage" class="hidden">
 
@@ -436,14 +553,19 @@ button.search-button{background:#111827}
 
 <h2>🎫 Mes cartes</h2>
 
-<div id="clientCards" class="grid"></div>
+<div
+    id="clientCards"
+    class="grid">
+</div>
 
 </div>
 
 </section>
 
 
-<!-- ================= NFC PUBLIC ================= -->
+<!-- =====================================================
+     PAGE NFC
+===================================================== -->
 
 <section id="nfcPage" class="hidden">
 
@@ -464,9 +586,13 @@ Chargement...
 </section>
 
 
-<!-- ================= MODIFICATION ================= -->
+<!-- =====================================================
+     MODIFICATION CARTE
+===================================================== -->
 
-<div id="editModal" class="modal hidden">
+<div
+    id="editModal"
+    class="modal hidden">
 
 <div class="modal-box">
 
@@ -497,7 +623,10 @@ Recherche gratuite avec OpenStreetMap.
     🔎 Rechercher
 </button>
 
-<div id="searchResults" class="search-results"></div>
+<div
+    id="searchResults"
+    class="search-results">
+</div>
 
 </div>
 
@@ -617,6 +746,214 @@ function message(id,text,type="success"){
 }
 
 
+function showLogin(){
+
+    hide("signupPage");
+    hide("adminPage");
+    hide("clientPage");
+    hide("nfcPage");
+
+    show("loginPage");
+
+    hide("loginError");
+}
+
+
+function showSignup(){
+
+    hide("loginPage");
+    hide("adminPage");
+    hide("clientPage");
+    hide("nfcPage");
+
+    show("signupPage");
+}
+
+
+/* =====================================================
+   CREATION COMPTE
+===================================================== */
+
+async function signup(){
+
+    const business =
+        document.getElementById(
+            "signupBusiness"
+        ).value.trim();
+
+    const email =
+        document.getElementById(
+            "signupEmail"
+        ).value.trim();
+
+    const password =
+        document.getElementById(
+            "signupPassword"
+        ).value;
+
+    const confirm =
+        document.getElementById(
+            "signupPasswordConfirm"
+        ).value;
+
+
+    document.getElementById(
+        "signupMessage"
+    ).innerHTML = "";
+
+
+    if(!business || !email || !password || !confirm){
+
+        message(
+            "signupMessage",
+            "❌ Remplis tous les champs.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(password.length < 6){
+
+        message(
+            "signupMessage",
+            "❌ Le mot de passe doit contenir au moins 6 caractères.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(password !== confirm){
+
+        message(
+            "signupMessage",
+            "❌ Les deux mots de passe sont différents.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.signUp({
+
+            email:email,
+
+            password:password
+
+        });
+
+
+    if(error){
+
+        message(
+            "signupMessage",
+            "❌ " + error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    /*
+       Si Supabase demande une confirmation
+       d'adresse email, l'utilisateur devra
+       confirmer son email avant connexion.
+    */
+
+    if(!data.user){
+
+        message(
+            "signupMessage",
+            "❌ Le compte n'a pas pu être créé.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /*
+       Création du profil commerçant.
+    */
+
+    const {
+        error:profileError
+    } =
+        await supabaseClient
+        .from("profiles")
+        .insert({
+
+            id:data.user.id,
+
+            role:"client",
+
+            business_name:business
+
+        });
+
+
+    if(profileError){
+
+        /*
+           Le compte Auth existe quand même.
+           On indique l'erreur pour pouvoir
+           corriger les permissions Supabase.
+        */
+
+        message(
+            "signupMessage",
+            "⚠️ Compte créé mais impossible de créer le profil : " +
+            profileError.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    message(
+        "signupMessage",
+        "✅ Compte créé avec succès ! Tu peux maintenant te connecter."
+    );
+
+
+    document.getElementById(
+        "signupBusiness"
+    ).value = "";
+
+    document.getElementById(
+        "signupEmail"
+    ).value = "";
+
+    document.getElementById(
+        "signupPassword"
+    ).value = "";
+
+    document.getElementById(
+        "signupPasswordConfirm"
+    ).value = "";
+
+
+    setTimeout(
+        function(){
+
+            showLogin();
+
+        },
+        1500
+    );
+}
+
+
 /* =====================================================
    LOGIN
 ===================================================== */
@@ -624,14 +961,18 @@ function message(id,text,type="success"){
 async function login(){
 
     const email =
-        document.getElementById("email")
-        .value.trim();
+        document.getElementById(
+            "email"
+        ).value.trim();
 
     const password =
-        document.getElementById("password")
-        .value;
+        document.getElementById(
+            "password"
+        ).value;
+
 
     hide("loginError");
+
 
     if(!email || !password){
 
@@ -644,12 +985,19 @@ async function login(){
         return;
     }
 
-    const {error} =
+
+    const {
+        error
+    } =
         await supabaseClient.auth
         .signInWithPassword({
+
             email:email,
+
             password:password
+
         });
+
 
     if(error){
 
@@ -661,6 +1009,7 @@ async function login(){
 
         return;
     }
+
 
     await loadUser();
 }
@@ -677,13 +1026,14 @@ async function logout(){
     hide("adminPage");
     hide("clientPage");
     hide("nfcPage");
+    hide("signupPage");
 
     show("loginPage");
 }
 
 
 /* =====================================================
-   UTILISATEUR
+   CHARGER UTILISATEUR
 ===================================================== */
 
 async function loadUser(){
@@ -694,12 +1044,14 @@ async function loadUser(){
         await supabaseClient.auth
         .getUser();
 
+
     if(!user){
 
-        show("loginPage");
+        showLogin();
 
         return;
     }
+
 
     const {
         data:profile,
@@ -710,6 +1062,7 @@ async function loadUser(){
         .select("*")
         .eq("id",user.id)
         .maybeSingle();
+
 
     if(error){
 
@@ -722,6 +1075,7 @@ async function loadUser(){
         return;
     }
 
+
     if(!profile){
 
         message(
@@ -733,7 +1087,10 @@ async function loadUser(){
         return;
     }
 
+
     hide("loginPage");
+    hide("signupPage");
+
 
     if(profile.role === "admin"){
 
@@ -749,6 +1106,7 @@ async function loadUser(){
 
         show("clientPage");
 
+
         document.getElementById(
             "clientName"
         ).textContent =
@@ -757,6 +1115,7 @@ async function loadUser(){
                 profile.business_name ||
                 "Mon espace"
             );
+
 
         await loadClient(user.id);
     }
@@ -770,13 +1129,17 @@ async function loadUser(){
 async function loadAdmin(){
 
     const container =
-        document.getElementById("adminCards");
+        document.getElementById(
+            "adminCards"
+        );
+
 
     if(container){
 
         container.innerHTML =
-            '<div class="loading">🔄 Chargement...</div>';
+            '<div class="loading">🔄 Chargement des cartes...</div>';
     }
+
 
     const {
         data:cards,
@@ -785,7 +1148,8 @@ async function loadAdmin(){
         await supabaseClient
         .from("nfc_cards")
         .select("*")
-        .order("id",{ascending:true});
+        .order("id");
+
 
     if(error){
 
@@ -793,10 +1157,12 @@ async function loadAdmin(){
 
             container.innerHTML = `
                 <div class="error">
-                    ❌ ${escapeHtml(error.message)}
+                    ❌ Impossible de charger les cartes.<br>
+                    ${escapeHtml(error.message)}
                 </div>
             `;
         }
+
 
         message(
             "adminMessage",
@@ -807,19 +1173,15 @@ async function loadAdmin(){
         return;
     }
 
+
     const safeCards =
-        Array.isArray(cards)
-        ? cards
-        : [];
+        cards || [];
 
-
-    /* STATISTIQUES */
 
     const used =
         safeCards.filter(
             card =>
-                card.status === "used" ||
-                !!card.owner_id
+                card.status === "used"
         ).length;
 
 
@@ -851,7 +1213,7 @@ async function loadAdmin(){
 
         container.innerHTML = `
             <div class="empty">
-                🎫 Aucune carte trouvée dans la base de données.
+                🎫 Aucune carte trouvée.
             </div>
         `;
 
@@ -859,23 +1221,18 @@ async function loadAdmin(){
     }
 
 
-    /* AFFICHAGE DE CHAQUE CARTE */
-
     safeCards.forEach(card => {
 
         const div =
-            document.createElement("div");
-
-
-        const isUsed =
-            card.status === "used" ||
-            !!card.owner_id;
+            document.createElement(
+                "div"
+            );
 
 
         div.className =
             "nfc " +
             (
-                isUsed
+                card.status === "used"
                 ? "used"
                 : ""
             );
@@ -887,7 +1244,7 @@ async function loadAdmin(){
 
 
         const status =
-            isUsed
+            card.status === "used"
             ? "🔵 Utilisée"
             : "⚪ Disponible";
 
@@ -898,8 +1255,9 @@ async function loadAdmin(){
 
 
         const owner =
-            card.owner_id ||
-            null;
+            card.owner_id
+            ? "👤 Carte attribuée"
+            : "📦 Pas encore attribuée";
 
 
         div.innerHTML = `
@@ -916,35 +1274,26 @@ async function loadAdmin(){
 
                 <p>
                     🏪 <strong>
-                        ${escapeHtml(shop)}
+                    ${escapeHtml(shop)}
                     </strong>
                 </p>
 
-                <p>
-                    ${
-                        owner
-                        ? "👤 Commerçant attribué"
-                        : "📦 Pas encore attribuée"
-                    }
+                <p style="font-size:13px;color:#6b7280;">
+                    ${escapeHtml(owner)}
                 </p>
 
-                ${
-                    owner
-                    ? `
-                    <div class="owner-id">
-                        <strong>UUID propriétaire :</strong><br>
-                        ${escapeHtml(owner)}
-                    </div>
-                    `
-                    : ""
-                }
+                <p style="font-size:12px;color:#6b7280;">
+                    ID : ${escapeHtml(card.id)}
+                </p>
 
             </div>
 
             <button
                 type="button"
                 onclick="adminEditCard(${Number(card.id)})">
+
                 ✏️ Gérer la carte
+
             </button>
 
         `;
@@ -953,7 +1302,6 @@ async function loadAdmin(){
         container.appendChild(div);
 
     });
-
 }
 
 
@@ -970,7 +1318,7 @@ async function adminEditCard(id){
 
 
 /* =====================================================
-   CLIENT : MODIFIER
+   CLIENT : MODIFIER CARTE
 ===================================================== */
 
 async function editCard(id){
@@ -1055,12 +1403,13 @@ async function openCardEditor(id){
 
 
 /* =====================================================
-   FERMER
+   FERMER MODIFICATION
 ===================================================== */
 
 function closeEdit(){
 
     editingCardId = null;
+
     editingFromAdmin = false;
 
     hide("editModal");
@@ -1068,18 +1417,21 @@ function closeEdit(){
 
 
 /* =====================================================
-   PROFIL CLIENT
+   CREER / MODIFIER PROFIL CLIENT
 ===================================================== */
 
 async function createClientProfile(){
 
     const id =
-        document.getElementById("clientId")
-        .value.trim();
+        document.getElementById(
+            "clientId"
+        ).value.trim();
+
 
     const name =
-        document.getElementById("businessName")
-        .value.trim();
+        document.getElementById(
+            "businessName"
+        ).value.trim();
 
 
     if(!id || !name){
@@ -1160,56 +1512,17 @@ async function assignCard(){
 
         message(
             "adminMessage",
-            "Entre l'ID de la carte et l'UUID du commerçant.",
+            "Remplis tous les champs.",
             "error"
         );
 
         return;
     }
 
-
-    /* VERIFIER QUE LA CARTE EXISTE */
 
     const {
-        data:existingCard,
-        error:findError
-    } =
-        await supabaseClient
-        .from("nfc_cards")
-        .select("id,owner_id,status")
-        .eq("id",id)
-        .maybeSingle();
-
-
-    if(findError){
-
-        message(
-            "adminMessage",
-            findError.message,
-            "error"
-        );
-
-        return;
-    }
-
-
-    if(!existingCard){
-
-        message(
-            "adminMessage",
-            "❌ Cette carte n'existe pas.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    /* ATTRIBUTION */
-
-    const {
-        data:updatedCards,
-        error:updateError
+        data,
+        error
     } =
         await supabaseClient
         .from("nfc_cards")
@@ -1223,15 +1536,18 @@ async function assignCard(){
                 new Date().toISOString()
 
         })
-        .eq("id",id)
+        .eq(
+            "id",
+            id
+        )
         .select();
 
 
-    if(updateError){
+    if(error){
 
         message(
             "adminMessage",
-            updateError.message,
+            "❌ " + error.message,
             "error"
         );
 
@@ -1239,11 +1555,11 @@ async function assignCard(){
     }
 
 
-    if(!updatedCards || updatedCards.length === 0){
+    if(!data || data.length === 0){
 
         message(
             "adminMessage",
-            "❌ La carte n'a pas pu être modifiée. Vérifie les règles RLS de Supabase.",
+            "⚠️ Aucune carte modifiée. Vérifie l'ID et les permissions Supabase.",
             "error"
         );
 
@@ -1253,7 +1569,7 @@ async function assignCard(){
 
     message(
         "adminMessage",
-        "✅ Carte attribuée avec succès !"
+        "✅ Carte attribuée !"
     );
 
 
@@ -1266,8 +1582,6 @@ async function assignCard(){
         "assignOwnerId"
     ).value = "";
 
-
-    /* RECHARGER IMMEDIATEMENT */
 
     await loadAdmin();
 }
@@ -1286,8 +1600,11 @@ async function loadClient(userId){
         await supabaseClient
         .from("nfc_cards")
         .select("*")
-        .eq("owner_id",userId)
-        .order("id",{ascending:true});
+        .eq(
+            "owner_id",
+            userId
+        )
+        .order("id");
 
 
     if(error){
@@ -1326,18 +1643,15 @@ async function loadClient(userId){
     cards.forEach(card => {
 
         const div =
-            document.createElement("div");
-
-
-        const isUsed =
-            card.status === "used" ||
-            !!card.owner_id;
+            document.createElement(
+                "div"
+            );
 
 
         div.className =
             "nfc " +
             (
-                isUsed
+                card.status === "used"
                 ? "used"
                 : ""
             );
@@ -1355,17 +1669,15 @@ async function loadClient(userId){
             </h3>
 
             <span class="badge">
-
-            ${
-                isUsed
-                ? "🔵 Utilisée"
-                : "⚪ Disponible"
-            }
-
+                ${
+                    card.status === "used"
+                    ? "🔵 Utilisée"
+                    : "⚪ Disponible"
+                }
             </span>
 
             <p>
-                ${
+                🏪 ${
                     escapeHtml(
                         card.shop_name ||
                         "Commerce non configuré"
@@ -1387,7 +1699,6 @@ async function loadClient(userId){
         container.appendChild(div);
 
     });
-
 }
 
 
@@ -1485,7 +1796,9 @@ async function searchBusiness(){
         data.forEach(place => {
 
             const item =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             item.className =
@@ -1596,13 +1909,21 @@ function getPlaceName(place){
 
     return (
         place.name ||
+
         address.shop ||
+
         address.business ||
+
         address.amenity ||
+
         address.restaurant ||
+
         address.cafe ||
+
         address.bar ||
+
         address.office ||
+
         "Commerce"
     );
 }
@@ -1621,12 +1942,19 @@ function getPlaceAddress(place){
     const parts = [
 
         address.house_number,
+
         address.road,
+
         address.pedestrian,
+
         address.postcode,
+
         address.city,
+
         address.town,
+
         address.village,
+
         address.municipality
 
     ].filter(Boolean);
@@ -1635,7 +1963,9 @@ function getPlaceAddress(place){
     return [
         ...new Set(parts)
     ].join(", ") ||
+
     place.display_name ||
+
     "";
 }
 
@@ -1798,6 +2128,7 @@ async function saveCard(){
             "✅ Carte enregistrée !"
         );
 
+
         await loadAdmin();
 
     }else{
@@ -1817,7 +2148,9 @@ async function saveCard(){
 
         if(user){
 
-            await loadClient(user.id);
+            await loadClient(
+                user.id
+            );
         }
     }
 }
@@ -1834,7 +2167,9 @@ async function loadNFC(){
 
 
     const match =
-        path.match(/\/c\/(\d+)/);
+        path.match(
+            /\/c\/(\d+)/
+        );
 
 
     if(!match){
@@ -1848,6 +2183,7 @@ async function loadNFC(){
 
 
     hide("loginPage");
+    hide("signupPage");
     hide("adminPage");
     hide("clientPage");
 
@@ -1864,7 +2200,10 @@ async function loadNFC(){
         .select(
             "id,shop_name,google_review_url,description"
         )
-        .eq("id",id)
+        .eq(
+            "id",
+            id
+        )
         .single();
 
 
@@ -1918,7 +2257,6 @@ async function loadNFC(){
             "nfcDescription"
         ).textContent =
             "Cette carte n'est pas encore configurée.";
-
     }
 
 
@@ -1956,7 +2294,7 @@ async function loadNFC(){
 
     }else{
 
-        show("loginPage");
+        showLogin();
 
     }
 
