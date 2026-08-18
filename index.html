@@ -93,6 +93,10 @@ button.small{
     padding:8px 12px;
 }
 
+button.search-button{
+    background:#111827;
+}
+
 .error{
     background:#fee2e2;
     color:#991b1b;
@@ -186,7 +190,9 @@ button.small{
 
 .modal-box{
     width:100%;
-    max-width:500px;
+    max-width:550px;
+    max-height:90vh;
+    overflow-y:auto;
     background:white;
     border-radius:18px;
     padding:20px;
@@ -198,6 +204,48 @@ button.small{
 
 .close{
     background:#6b7280;
+}
+
+.search-box{
+    background:#f3f4f6;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.search-results{
+    max-height:300px;
+    overflow-y:auto;
+    margin-top:10px;
+}
+
+.search-result{
+    background:white;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:8px;
+    cursor:pointer;
+}
+
+.search-result:hover{
+    border-color:#2563eb;
+    background:#eff6ff;
+}
+
+.search-result strong{
+    display:block;
+    margin-bottom:4px;
+}
+
+.search-result small{
+    color:#6b7280;
+}
+
+.loading{
+    text-align:center;
+    padding:12px;
+    color:#6b7280;
 }
 
 @media(min-width:700px){
@@ -424,12 +472,60 @@ Chargement...
 
 <div id="editError" class="error hidden"></div>
 
+
+<!-- RECHERCHE COMMERCE -->
+
+<div class="search-box">
+
+<h3>🔎 Rechercher le commerce</h3>
+
+<p style="font-size:13px;color:#6b7280;">
+Recherche gratuite avec OpenStreetMap.
+Sélectionne ton commerce dans les résultats.
+</p>
+
+<input
+    id="businessSearch"
+    type="text"
+    placeholder="Ex : Maestro Dunkerque"
+    onkeydown="handleSearchKey(event)"
+>
+
+<button
+    type="button"
+    class="search-button"
+    onclick="searchBusiness()">
+    🔎 Rechercher
+</button>
+
+<div
+    id="searchMessage"
+    class="hidden">
+</div>
+
+<div
+    id="searchResults"
+    class="search-results">
+</div>
+
+</div>
+
+
 <label>Nom du commerce</label>
 
 <input
     id="editShop"
     placeholder="Ex : Maestro Dunkerque"
 >
+
+
+<label>Adresse du commerce</label>
+
+<input
+    id="editAddress"
+    placeholder="Adresse du commerce"
+>
+
 
 <label>Lien Google « Écrire un avis »</label>
 
@@ -439,12 +535,14 @@ Chargement...
     placeholder="https://..."
 >
 
+
 <label>Description</label>
 
 <textarea
     id="editDescription"
     placeholder="Description du commerce">
 </textarea>
+
 
 <button onclick="saveCard()">
     💾 Enregistrer
@@ -1126,6 +1224,21 @@ async function editCard(id){
         card.description || "";
 
 
+    document.getElementById(
+        "editAddress"
+    ).value = "";
+
+
+    document.getElementById(
+        "businessSearch"
+    ).value = "";
+
+
+    document.getElementById(
+        "searchResults"
+    ).innerHTML = "";
+
+
     hide("editError");
 
     show("editModal");
@@ -1145,6 +1258,289 @@ function closeEdit(){
 
 
 /* =====================================================
+   RECHERCHE COMMERCE
+   OpenStreetMap / Nominatim
+===================================================== */
+
+function handleSearchKey(event){
+
+    if(event.key === "Enter"){
+
+        event.preventDefault();
+
+        searchBusiness();
+    }
+}
+
+
+async function searchBusiness(){
+
+    const query =
+        document.getElementById(
+            "businessSearch"
+        ).value.trim();
+
+
+    const results =
+        document.getElementById(
+            "searchResults"
+        );
+
+
+    if(!query){
+
+        results.innerHTML =
+            "<p>Écris le nom du commerce.</p>";
+
+        return;
+    }
+
+
+    results.innerHTML =
+        '<div class="loading">🔎 Recherche...</div>';
+
+
+    try{
+
+        const url =
+            "https://nominatim.openstreetmap.org/search?" +
+            new URLSearchParams({
+
+                q:query,
+
+                format:"json",
+
+                addressdetails:"1",
+
+                limit:"8",
+
+                countrycodes:"fr",
+
+                "accept-language":"fr"
+
+            });
+
+
+        const response =
+            await fetch(url);
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Impossible de contacter le service de recherche."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        results.innerHTML = "";
+
+
+        if(!data || data.length === 0){
+
+            results.innerHTML =
+                "<p>Aucun commerce trouvé. Essaie avec le nom + la ville.</p>";
+
+            return;
+        }
+
+
+        data.forEach(place => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "search-result";
+
+
+            const name =
+                getPlaceName(place);
+
+
+            const address =
+                getPlaceAddress(place);
+
+
+            item.innerHTML = `
+
+                <strong>
+                    ${escapeHtml(name)}
+                </strong>
+
+                <small>
+                    📍 ${escapeHtml(address)}
+                </small>
+
+            `;
+
+
+            item.onclick =
+                function(){
+
+                    selectBusiness(
+                        place
+                    );
+
+                };
+
+
+            results.appendChild(item);
+
+        });
+
+
+    }catch(error){
+
+        results.innerHTML =
+            `<p style="color:#991b1b;">
+            ❌ ${escapeHtml(error.message)}
+            </p>`;
+
+    }
+}
+
+
+/* =====================================================
+   SELECTION COMMERCE
+===================================================== */
+
+function selectBusiness(place){
+
+    const name =
+        getPlaceName(place);
+
+
+    const address =
+        getPlaceAddress(place);
+
+
+    document.getElementById(
+        "editShop"
+    ).value =
+        name;
+
+
+    document.getElementById(
+        "editAddress"
+    ).value =
+        address;
+
+
+    document.getElementById(
+        "businessSearch"
+    ).value =
+        name;
+
+
+    document.getElementById(
+        "searchResults"
+    ).innerHTML = `
+
+        <div class="success">
+            ✅ Commerce sélectionné :
+            <strong>${escapeHtml(name)}</strong>
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   NOM DU COMMERCE
+===================================================== */
+
+function getPlaceName(place){
+
+    const address =
+        place.address || {};
+
+
+    return (
+        place.name ||
+
+        address.shop ||
+
+        address.business ||
+
+        address.amenity ||
+
+        address.restaurant ||
+
+        address.cafe ||
+
+        address.bar ||
+
+        address.office ||
+
+        "Commerce"
+    );
+}
+
+
+/* =====================================================
+   ADRESSE
+===================================================== */
+
+function getPlaceAddress(place){
+
+    const address =
+        place.address || {};
+
+
+    const parts = [
+
+        address.house_number,
+
+        address.road,
+
+        address.pedestrian,
+
+        address.postcode,
+
+        address.city,
+
+        address.town,
+
+        address.village,
+
+        address.municipality
+
+    ].filter(Boolean);
+
+
+    return [
+        ...new Set(parts)
+    ].join(", ") ||
+    place.display_name ||
+    "";
+}
+
+
+/* =====================================================
+   PROTECTION HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+/* =====================================================
    ENREGISTRER CARTE
 ===================================================== */
 
@@ -1159,6 +1555,12 @@ async function saveCard(){
     const shop =
         document.getElementById(
             "editShop"
+        ).value.trim();
+
+
+    const address =
+        document.getElementById(
+            "editAddress"
         ).value.trim();
 
 
@@ -1208,6 +1610,40 @@ async function saveCard(){
     }
 
 
+    /*
+       Comme ta table actuelle possède déjà
+       shop_name et description, on conserve
+       l'adresse dans description si aucune
+       colonne address n'existe encore.
+    */
+
+    let finalDescription = "";
+
+
+    if(address){
+
+        finalDescription +=
+            "📍 " +
+            address;
+
+    }
+
+
+    if(description){
+
+        if(finalDescription){
+
+            finalDescription +=
+                "\n\n";
+
+        }
+
+        finalDescription +=
+            description;
+
+    }
+
+
     const {
         error
     } =
@@ -1221,7 +1657,7 @@ async function saveCard(){
                 google || null,
 
             description:
-                description || null,
+                finalDescription || null,
 
             status:"used",
 
