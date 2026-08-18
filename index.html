@@ -177,10 +177,6 @@ button.search-button{
     margin-bottom:15px;
 }
 
-/* =====================================================
-   MODALE
-===================================================== */
-
 .modal{
     position:fixed;
     inset:0;
@@ -208,29 +204,21 @@ button.search-button{
     padding-right:45px;
 }
 
-/* CROIX */
 .modal-close{
     position:absolute;
     top:10px;
     right:10px;
-
     width:42px;
     height:42px;
-
     padding:0;
     margin:0;
-
     border-radius:50%;
-
     background:#e5e7eb;
     color:#111827;
-
     font-size:29px;
     font-weight:400;
     line-height:42px;
-
     cursor:pointer;
-
     display:flex;
     align-items:center;
     justify-content:center;
@@ -331,6 +319,15 @@ hr{
     margin-bottom:12px;
 }
 
+.place-id-helper{
+    background:#fef3c7;
+    color:#92400e;
+    padding:10px;
+    border-radius:10px;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
 @media(min-width:700px){
     .grid{
         grid-template-columns:repeat(4,1fr);
@@ -347,10 +344,6 @@ hr{
 </header>
 
 <main>
-
-<!-- =====================================================
-     CONNEXION
-===================================================== -->
 
 <section id="loginPage">
 
@@ -391,10 +384,6 @@ hr{
 
 </section>
 
-
-<!-- =====================================================
-     CREATION COMPTE
-===================================================== -->
 
 <section id="signupPage" class="hidden">
 
@@ -451,10 +440,6 @@ hr{
 
 </section>
 
-
-<!-- =====================================================
-     ADMIN
-===================================================== -->
 
 <section id="adminPage" class="hidden">
 
@@ -569,10 +554,6 @@ Disponibles
 </section>
 
 
-<!-- =====================================================
-     CLIENT
-===================================================== -->
-
 <section id="clientPage" class="hidden">
 
 <div class="topbar">
@@ -605,10 +586,6 @@ Disponibles
 </section>
 
 
-<!-- =====================================================
-     PAGE NFC
-===================================================== -->
-
 <section id="nfcPage" class="hidden">
 
 <div
@@ -628,17 +605,11 @@ Chargement...
 </section>
 
 
-<!-- =====================================================
-     MODIFICATION CARTE
-===================================================== -->
-
 <div
     id="editModal"
     class="modal hidden">
 
 <div class="modal-box">
-
-<!-- NOUVELLE CROIX -->
 
 <button
     type="button"
@@ -700,16 +671,43 @@ Sélectionne ton commerce dans les résultats.
 >
 
 
-<label>Lien Google « Écrire un avis »</label>
+<hr>
+
+
+<h3>⭐ Google Avis</h3>
+
+<div class="place-id-helper">
+    💡 Colle ici le <strong>Google Place ID</strong> du commerce.
+    Exemple : <code>ChIJ...</code>
+</div>
+
+<label>Google Place ID</label>
+
+<input
+    id="editPlaceId"
+    type="text"
+    placeholder="Ex : ChIJ..."
+>
+
+<button
+    type="button"
+    onclick="generateReviewLink()">
+    ⭐ Générer le lien d'avis
+</button>
+
+
+<label style="margin-top:15px;display:block;">
+    Lien Google « Écrire un avis »
+</label>
 
 <input
     id="editGoogle"
     type="url"
-    placeholder="https://maps.google.com/..."
+    placeholder="Le lien sera généré automatiquement"
 >
 
 <div class="google-helper">
-    💡 Après avoir sélectionné un commerce, le site génère automatiquement un lien Google Maps correspondant au nom et à l'adresse.
+    💡 Le bouton ci-dessus transforme ton Place ID en lien direct vers la page Google permettant d'écrire un avis.
 </div>
 
 
@@ -1367,6 +1365,11 @@ async function openCardEditor(id){
         card.google_review_url || "";
 
     document.getElementById(
+        "editPlaceId"
+    ).value =
+        card.google_place_id || "";
+
+    document.getElementById(
         "editDescription"
     ).value =
         card.description || "";
@@ -1387,6 +1390,64 @@ async function openCardEditor(id){
     hide("editError");
 
     show("editModal");
+}
+
+
+/* =====================================================
+   GENERER LIEN GOOGLE AVIS
+===================================================== */
+
+function generateReviewLink(){
+
+    const placeId =
+        document.getElementById(
+            "editPlaceId"
+        ).value.trim();
+
+    hide("editError");
+
+    if(!placeId){
+
+        message(
+            "editError",
+            "❌ Colle d'abord le Google Place ID.",
+            "error"
+        );
+
+        return;
+    }
+
+    /*
+       Vérification basique du format.
+       Un Google Place ID commence généralement
+       par ChIJ ou autre identifiant Google valide.
+    */
+
+    if(placeId.length < 10){
+
+        message(
+            "editError",
+            "❌ Le Place ID semble trop court.",
+            "error"
+        );
+
+        return;
+    }
+
+    const reviewUrl =
+        "https://search.google.com/local/writereview?placeid=" +
+        encodeURIComponent(placeId);
+
+    document.getElementById(
+        "editGoogle"
+    ).value =
+        reviewUrl;
+
+    message(
+        "editError",
+        "✅ Le lien « Écrire un avis » a été généré.",
+        "success"
+    );
 }
 
 
@@ -1797,7 +1858,7 @@ async function searchBusiness(){
 
 
 /* =====================================================
-   CREER LIEN GOOGLE MAPS
+   GOOGLE MAPS
 ===================================================== */
 
 function createGoogleMapsSearchUrl(
@@ -1847,22 +1908,22 @@ function selectBusiness(place){
     ).value =
         name;
 
-
     /*
-       Génération automatique du lien Google Maps.
-    */
+       On ne remplit PLUS automatiquement
+       le champ Google Avis avec une simple
+       recherche Google Maps.
 
-    const googleUrl =
-        createGoogleMapsSearchUrl(
-            name,
-            address
-        );
+       Le Place ID est maintenant demandé
+       séparément.
+    */
 
     document.getElementById(
         "editGoogle"
-    ).value =
-        googleUrl;
+    ).value = "";
 
+    document.getElementById(
+        "editPlaceId"
+    ).value = "";
 
     document.getElementById(
         "searchResults"
@@ -1877,7 +1938,15 @@ function selectBusiness(place){
 
             <br><br>
 
-            ⭐ Le lien Google Maps a été rempli automatiquement.
+            📍 Adresse :
+            ${escapeHtml(address)}
+
+            <br><br>
+
+            ⭐ Colle maintenant le
+            <strong>Google Place ID</strong>
+            puis clique sur
+            <strong>« Générer le lien d'avis »</strong>.
 
         </div>
 
@@ -1991,6 +2060,11 @@ async function saveCard(){
             "editAddress"
         ).value.trim();
 
+    const placeId =
+        document.getElementById(
+            "editPlaceId"
+        ).value.trim();
+
     const google =
         document.getElementById(
             "editGoogle"
@@ -2058,6 +2132,9 @@ async function saveCard(){
         .update({
 
             shop_name:shop,
+
+            google_place_id:
+                placeId || null,
 
             google_review_url:
                 google || null,
