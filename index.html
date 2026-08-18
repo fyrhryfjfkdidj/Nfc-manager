@@ -8,9 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
     margin:0;
@@ -25,14 +23,8 @@ header{
     padding:20px;
 }
 
-header h1{
-    margin:0 0 5px;
-}
-
-header p{
-    margin:0;
-    opacity:.7;
-}
+header h1{margin:0 0 5px}
+header p{margin:0;opacity:.7}
 
 main{
     max-width:1100px;
@@ -40,9 +32,7 @@ main{
     padding:18px;
 }
 
-.hidden{
-    display:none!important;
-}
+.hidden{display:none!important}
 
 .card-box{
     background:white;
@@ -52,24 +42,19 @@ main{
     box-shadow:0 2px 10px #0000000d;
 }
 
-input,
-textarea,
-button{
+input,textarea,button{
     width:100%;
     padding:12px;
     border-radius:10px;
     font-size:15px;
 }
 
-input,
-textarea{
+input,textarea{
     border:1px solid #d1d5db;
     margin:6px 0 12px;
 }
 
-textarea{
-    min-height:100px;
-}
+textarea{min-height:100px}
 
 button{
     border:0;
@@ -80,22 +65,10 @@ button{
     cursor:pointer;
 }
 
-button.secondary{
-    background:#374151;
-}
-
-button.danger{
-    background:#dc2626;
-}
-
-button.small{
-    width:auto;
-    padding:8px 12px;
-}
-
-button.search-button{
-    background:#111827;
-}
+button.secondary{background:#374151}
+button.danger{background:#dc2626}
+button.small{width:auto;padding:8px 12px}
+button.search-button{background:#111827}
 
 .error{
     background:#fee2e2;
@@ -124,7 +97,7 @@ button.search-button{
     border:2px solid #d1d5db;
     border-radius:15px;
     padding:16px;
-    min-height:150px;
+    min-height:180px;
 }
 
 .nfc.used{
@@ -198,13 +171,8 @@ button.search-button{
     padding:20px;
 }
 
-.modal-box h2{
-    margin-top:0;
-}
-
-.close{
-    background:#6b7280;
-}
+.modal-box h2{margin-top:0}
+.close{background:#6b7280}
 
 .search-box{
     background:#f3f4f6;
@@ -238,13 +206,26 @@ button.search-button{
     margin-bottom:4px;
 }
 
-.search-result small{
-    color:#6b7280;
-}
+.search-result small{color:#6b7280}
 
 .loading{
     text-align:center;
     padding:12px;
+    color:#6b7280;
+}
+
+.admin-card-info{
+    margin:12px 0;
+    line-height:1.7;
+}
+
+.admin-card-info p{
+    margin:4px 0;
+}
+
+.empty{
+    text-align:center;
+    padding:25px;
     color:#6b7280;
 }
 
@@ -265,7 +246,7 @@ button.search-button{
 
 <main>
 
-<!-- ================= LOGIN ================= -->
+<!-- LOGIN -->
 
 <section id="loginPage">
 
@@ -300,7 +281,7 @@ button.search-button{
 </section>
 
 
-<!-- ================= ADMIN ================= -->
+<!-- ADMIN -->
 
 <section id="adminPage" class="hidden">
 
@@ -373,7 +354,6 @@ Disponibles
     id="assignCardId"
     type="number"
     min="1"
-    max="100"
     placeholder="Ex : 1"
 >
 
@@ -391,9 +371,22 @@ Disponibles
 </div>
 
 
+<!-- TOUTES LES CARTES -->
+
 <div class="card-box">
 
+<div class="topbar">
+
 <h2>🎫 Toutes les cartes</h2>
+
+<button
+    type="button"
+    class="small secondary"
+    onclick="loadAdmin()">
+    🔄 Actualiser
+</button>
+
+</div>
 
 <div
     id="adminCards"
@@ -405,7 +398,7 @@ Disponibles
 </section>
 
 
-<!-- ================= CLIENT ================= -->
+<!-- CLIENT -->
 
 <section id="clientPage" class="hidden">
 
@@ -439,7 +432,7 @@ Disponibles
 </section>
 
 
-<!-- ================= NFC PUBLIC ================= -->
+<!-- NFC PUBLIC -->
 
 <section id="nfcPage" class="hidden">
 
@@ -460,7 +453,7 @@ Chargement...
 </section>
 
 
-<!-- ================= MODIFICATION CARTE ================= -->
+<!-- MODIFICATION CARTE -->
 
 <div
     id="editModal"
@@ -497,11 +490,6 @@ Sélectionne ton commerce dans les résultats.
     onclick="searchBusiness()">
     🔎 Rechercher
 </button>
-
-<div
-    id="searchMessage"
-    class="hidden">
-</div>
 
 <div
     id="searchResults"
@@ -582,10 +570,11 @@ supabase.createClient(
 
 
 /* =====================================================
-   VARIABLE CARTE EN COURS
+   VARIABLES
 ===================================================== */
 
 let editingCardId = null;
+let editingFromAdmin = false;
 
 
 /* =====================================================
@@ -614,11 +603,7 @@ function hide(id){
 }
 
 
-function message(
-    id,
-    text,
-    type="success"
-){
+function message(id,text,type="success"){
 
     const element =
         document.getElementById(id);
@@ -637,17 +622,14 @@ function message(
 async function login(){
 
     const email =
-        document.getElementById(
-            "email"
-        ).value.trim();
+        document.getElementById("email")
+        .value.trim();
 
     const password =
-        document.getElementById(
-            "password"
-        ).value;
+        document.getElementById("password")
+        .value;
 
     hide("loginError");
-
 
     if(!email || !password){
 
@@ -660,17 +642,12 @@ async function login(){
         return;
     }
 
-
     const {error} =
         await supabaseClient.auth
         .signInWithPassword({
-
             email:email,
-
             password:password
-
         });
-
 
     if(error){
 
@@ -682,7 +659,6 @@ async function login(){
 
         return;
     }
-
 
     await loadUser();
 }
@@ -716,14 +692,12 @@ async function loadUser(){
         await supabaseClient.auth
         .getUser();
 
-
     if(!user){
 
         show("loginPage");
 
         return;
     }
-
 
     const {
         data:profile,
@@ -734,7 +708,6 @@ async function loadUser(){
         .select("*")
         .eq("id",user.id)
         .maybeSingle();
-
 
     if(error){
 
@@ -747,7 +720,6 @@ async function loadUser(){
         return;
     }
 
-
     if(!profile){
 
         message(
@@ -759,9 +731,7 @@ async function loadUser(){
         return;
     }
 
-
     hide("loginPage");
-
 
     if(profile.role === "admin"){
 
@@ -786,17 +756,25 @@ async function loadUser(){
                 "Mon espace"
             );
 
-
         await loadClient(user.id);
     }
 }
 
 
 /* =====================================================
-   ADMIN : CARTES
+   ADMIN : TOUTES LES CARTES
 ===================================================== */
 
 async function loadAdmin(){
+
+    const container =
+        document.getElementById("adminCards");
+
+    if(container){
+
+        container.innerHTML =
+            '<div class="loading">🔄 Chargement des cartes...</div>';
+    }
 
     const {
         data:cards,
@@ -807,8 +785,17 @@ async function loadAdmin(){
         .select("*")
         .order("id");
 
-
     if(error){
+
+        if(container){
+
+            container.innerHTML = `
+                <div class="error">
+                    ❌ Impossible de charger les cartes.<br>
+                    ${escapeHtml(error.message)}
+                </div>
+            `;
+        }
 
         message(
             "adminMessage",
@@ -819,48 +806,47 @@ async function loadAdmin(){
         return;
     }
 
+    const safeCards = cards || [];
 
     const used =
-        cards.filter(
-            card =>
-                card.status === "used"
+        safeCards.filter(
+            card => card.status === "used"
         ).length;
-
 
     document.getElementById(
         "totalCards"
     ).textContent =
-        cards.length;
-
+        safeCards.length;
 
     document.getElementById(
         "usedCards"
     ).textContent =
         used;
 
-
     document.getElementById(
         "freeCards"
     ).textContent =
-        cards.length - used;
+        safeCards.length - used;
 
-
-    const container =
-        document.getElementById(
-            "adminCards"
-        );
-
+    if(!container)return;
 
     container.innerHTML = "";
 
+    if(safeCards.length === 0){
 
-    cards.forEach(card => {
+        container.innerHTML = `
+            <div class="empty">
+                🎫 Aucune carte trouvée.
+            </div>
+        `;
+
+        return;
+    }
+
+    safeCards.forEach(card => {
 
         const div =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         div.className =
             "nfc " +
@@ -870,47 +856,160 @@ async function loadAdmin(){
                 : ""
             );
 
-
         const number =
             String(card.id)
             .padStart(5,"0");
 
+        const status =
+            card.status === "used"
+            ? "🔵 Utilisée"
+            : "⚪ Disponible";
+
+        const shop =
+            card.shop_name ||
+            "Aucun commerce";
+
+        const owner =
+            card.owner_id
+            ? "👤 Attribuée"
+            : "📦 Pas encore attribuée";
 
         div.innerHTML = `
 
-            <h3>#${number}</h3>
+            <h3>🎫 Carte #${number}</h3>
 
             <span class="badge">
-
-            ${
-                card.status === "used"
-                ? "🔵 Utilisée"
-                : "⚪ Disponible"
-            }
-
+                ${status}
             </span>
 
-            <p>
-            ${
-                card.shop_name ||
-                "Aucun commerce"
-            }
-            </p>
+            <div class="admin-card-info">
 
-            <small>
-            ${
-                card.owner_id
-                ? "👤 Attribuée"
-                : "📦 Disponible"
-            }
-            </small>
+                <p>
+                    🏪 <strong>
+                    ${escapeHtml(shop)}
+                    </strong>
+                </p>
+
+                <p style="font-size:13px;color:#6b7280;">
+                    ${escapeHtml(owner)}
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                onclick="adminEditCard(${Number(card.id)})">
+
+                ✏️ Gérer la carte
+
+            </button>
 
         `;
-
 
         container.appendChild(div);
 
     });
+}
+
+
+/* =====================================================
+   ADMIN : GERER UNE CARTE
+===================================================== */
+
+async function adminEditCard(id){
+
+    editingFromAdmin = true;
+
+    await openCardEditor(id);
+}
+
+
+/* =====================================================
+   CLIENT : MODIFIER UNE CARTE
+===================================================== */
+
+async function editCard(id){
+
+    editingFromAdmin = false;
+
+    await openCardEditor(id);
+}
+
+
+/* =====================================================
+   OUVRIR EDITEUR
+===================================================== */
+
+async function openCardEditor(id){
+
+    editingCardId = id;
+
+    const {
+        data:card,
+        error
+    } =
+        await supabaseClient
+        .from("nfc_cards")
+        .select("*")
+        .eq("id",id)
+        .single();
+
+    if(error){
+
+        alert(
+            "Erreur : " +
+            error.message
+        );
+
+        editingCardId = null;
+
+        return;
+    }
+
+    document.getElementById(
+        "editShop"
+    ).value =
+        card.shop_name || "";
+
+    document.getElementById(
+        "editGoogle"
+    ).value =
+        card.google_review_url || "";
+
+    document.getElementById(
+        "editDescription"
+    ).value =
+        card.description || "";
+
+    document.getElementById(
+        "editAddress"
+    ).value = "";
+
+    document.getElementById(
+        "businessSearch"
+    ).value =
+        card.shop_name || "";
+
+    document.getElementById(
+        "searchResults"
+    ).innerHTML = "";
+
+    hide("editError");
+
+    show("editModal");
+}
+
+
+/* =====================================================
+   FERMER MODIFICATION
+===================================================== */
+
+function closeEdit(){
+
+    editingCardId = null;
+    editingFromAdmin = false;
+
+    hide("editModal");
 }
 
 
@@ -921,16 +1020,12 @@ async function loadAdmin(){
 async function createClientProfile(){
 
     const id =
-        document.getElementById(
-            "clientId"
-        ).value.trim();
-
+        document.getElementById("clientId")
+        .value.trim();
 
     const name =
-        document.getElementById(
-            "businessName"
-        ).value.trim();
-
+        document.getElementById("businessName")
+        .value.trim();
 
     if(!id || !name){
 
@@ -942,7 +1037,6 @@ async function createClientProfile(){
 
         return;
     }
-
 
     const {
         error
@@ -956,7 +1050,6 @@ async function createClientProfile(){
             }
         );
 
-
     if(error){
 
         message(
@@ -968,17 +1061,14 @@ async function createClientProfile(){
         return;
     }
 
-
     message(
         "adminMessage",
         "✅ Profil commerçant enregistré !"
     );
 
-
     document.getElementById(
         "clientId"
     ).value = "";
-
 
     document.getElementById(
         "businessName"
@@ -999,12 +1089,10 @@ async function assignCard(){
             ).value
         );
 
-
     const owner =
         document.getElementById(
             "assignOwnerId"
         ).value.trim();
-
 
     if(!id || !owner){
 
@@ -1016,7 +1104,6 @@ async function assignCard(){
 
         return;
     }
-
 
     const {
         error
@@ -1035,7 +1122,6 @@ async function assignCard(){
         })
         .eq("id",id);
 
-
     if(error){
 
         message(
@@ -1047,22 +1133,18 @@ async function assignCard(){
         return;
     }
 
-
     message(
         "adminMessage",
         "✅ Carte attribuée !"
     );
 
-
     document.getElementById(
         "assignCardId"
     ).value = "";
 
-
     document.getElementById(
         "assignOwnerId"
     ).value = "";
-
 
     await loadAdmin();
 }
@@ -1084,7 +1166,6 @@ async function loadClient(userId){
         .eq("owner_id",userId)
         .order("id");
 
-
     if(error){
 
         message(
@@ -1096,15 +1177,10 @@ async function loadClient(userId){
         return;
     }
 
-
     const container =
-        document.getElementById(
-            "clientCards"
-        );
-
+        document.getElementById("clientCards");
 
     container.innerHTML = "";
-
 
     if(!cards || cards.length === 0){
 
@@ -1114,14 +1190,10 @@ async function loadClient(userId){
         return;
     }
 
-
     cards.forEach(card => {
 
         const div =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         div.className =
             "nfc " +
@@ -1131,43 +1203,40 @@ async function loadClient(userId){
                 : ""
             );
 
-
         const number =
             String(card.id)
             .padStart(5,"0");
-
 
         div.innerHTML = `
 
             <h3>#${number}</h3>
 
             <span class="badge">
-
             ${
                 card.status === "used"
                 ? "🔵 Utilisée"
                 : "⚪ Disponible"
             }
-
             </span>
 
             <p>
             ${
-                card.shop_name ||
-                "Commerce non configuré"
+                escapeHtml(
+                    card.shop_name ||
+                    "Commerce non configuré"
+                )
             }
             </p>
 
             <button
                 type="button"
-                onclick="editCard(${card.id})">
+                onclick="editCard(${Number(card.id)})">
 
                 ✏️ Modifier
 
             </button>
 
         `;
-
 
         container.appendChild(div);
 
@@ -1176,90 +1245,7 @@ async function loadClient(userId){
 
 
 /* =====================================================
-   OUVRIR MODIFICATION
-===================================================== */
-
-async function editCard(id){
-
-    editingCardId = id;
-
-
-    const {
-        data:card,
-        error
-    } =
-        await supabaseClient
-        .from("nfc_cards")
-        .select("*")
-        .eq("id",id)
-        .single();
-
-
-    if(error){
-
-        alert(
-            "Erreur : " +
-            error.message
-        );
-
-        return;
-    }
-
-
-    document.getElementById(
-        "editShop"
-    ).value =
-        card.shop_name || "";
-
-
-    document.getElementById(
-        "editGoogle"
-    ).value =
-        card.google_review_url || "";
-
-
-    document.getElementById(
-        "editDescription"
-    ).value =
-        card.description || "";
-
-
-    document.getElementById(
-        "editAddress"
-    ).value = "";
-
-
-    document.getElementById(
-        "businessSearch"
-    ).value = "";
-
-
-    document.getElementById(
-        "searchResults"
-    ).innerHTML = "";
-
-
-    hide("editError");
-
-    show("editModal");
-}
-
-
-/* =====================================================
-   FERMER MODIFICATION
-===================================================== */
-
-function closeEdit(){
-
-    editingCardId = null;
-
-    hide("editModal");
-}
-
-
-/* =====================================================
    RECHERCHE COMMERCE
-   OpenStreetMap / Nominatim
 ===================================================== */
 
 function handleSearchKey(event){
@@ -1280,12 +1266,10 @@ async function searchBusiness(){
             "businessSearch"
         ).value.trim();
 
-
     const results =
         document.getElementById(
             "searchResults"
         );
-
 
     if(!query){
 
@@ -1295,10 +1279,8 @@ async function searchBusiness(){
         return;
     }
 
-
     results.innerHTML =
         '<div class="loading">🔎 Recherche...</div>';
-
 
     try{
 
@@ -1320,10 +1302,8 @@ async function searchBusiness(){
 
             });
 
-
         const response =
             await fetch(url);
-
 
         if(!response.ok){
 
@@ -1332,13 +1312,10 @@ async function searchBusiness(){
             );
         }
 
-
         const data =
             await response.json();
 
-
         results.innerHTML = "";
-
 
         if(!data || data.length === 0){
 
@@ -1348,26 +1325,19 @@ async function searchBusiness(){
             return;
         }
 
-
         data.forEach(place => {
 
             const item =
-                document.createElement(
-                    "div"
-                );
-
+                document.createElement("div");
 
             item.className =
                 "search-result";
 
-
             const name =
                 getPlaceName(place);
 
-
             const address =
                 getPlaceAddress(place);
-
 
             item.innerHTML = `
 
@@ -1381,21 +1351,16 @@ async function searchBusiness(){
 
             `;
 
-
             item.onclick =
                 function(){
 
-                    selectBusiness(
-                        place
-                    );
+                    selectBusiness(place);
 
                 };
-
 
             results.appendChild(item);
 
         });
-
 
     }catch(error){
 
@@ -1417,28 +1382,23 @@ function selectBusiness(place){
     const name =
         getPlaceName(place);
 
-
     const address =
         getPlaceAddress(place);
-
 
     document.getElementById(
         "editShop"
     ).value =
         name;
 
-
     document.getElementById(
         "editAddress"
     ).value =
         address;
 
-
     document.getElementById(
         "businessSearch"
     ).value =
         name;
-
 
     document.getElementById(
         "searchResults"
@@ -1450,12 +1410,11 @@ function selectBusiness(place){
         </div>
 
     `;
-
 }
 
 
 /* =====================================================
-   NOM DU COMMERCE
+   NOM COMMERCE
 ===================================================== */
 
 function getPlaceName(place){
@@ -1463,24 +1422,15 @@ function getPlaceName(place){
     const address =
         place.address || {};
 
-
     return (
         place.name ||
-
         address.shop ||
-
         address.business ||
-
         address.amenity ||
-
         address.restaurant ||
-
         address.cafe ||
-
         address.bar ||
-
         address.office ||
-
         "Commerce"
     );
 }
@@ -1495,27 +1445,18 @@ function getPlaceAddress(place){
     const address =
         place.address || {};
 
-
     const parts = [
 
         address.house_number,
-
         address.road,
-
         address.pedestrian,
-
         address.postcode,
-
         address.city,
-
         address.town,
-
         address.village,
-
         address.municipality
 
     ].filter(Boolean);
-
 
     return [
         ...new Set(parts)
@@ -1551,30 +1492,25 @@ async function saveCard(){
         return;
     }
 
-
     const shop =
         document.getElementById(
             "editShop"
         ).value.trim();
-
 
     const address =
         document.getElementById(
             "editAddress"
         ).value.trim();
 
-
     const google =
         document.getElementById(
             "editGoogle"
         ).value.trim();
 
-
     const description =
         document.getElementById(
             "editDescription"
         ).value.trim();
-
 
     if(!shop){
 
@@ -1587,16 +1523,11 @@ async function saveCard(){
         return;
     }
 
-
     if(
         google &&
         !(
-            google.startsWith(
-                "https://"
-            ) ||
-            google.startsWith(
-                "http://"
-            )
+            google.startsWith("https://") ||
+            google.startsWith("http://")
         )
     ){
 
@@ -1609,25 +1540,13 @@ async function saveCard(){
         return;
     }
 
-
-    /*
-       Comme ta table actuelle possède déjà
-       shop_name et description, on conserve
-       l'adresse dans description si aucune
-       colonne address n'existe encore.
-    */
-
     let finalDescription = "";
-
 
     if(address){
 
         finalDescription +=
-            "📍 " +
-            address;
-
+            "📍 " + address;
     }
-
 
     if(description){
 
@@ -1635,14 +1554,11 @@ async function saveCard(){
 
             finalDescription +=
                 "\n\n";
-
         }
 
         finalDescription +=
             description;
-
     }
-
 
     const {
         error
@@ -1670,7 +1586,6 @@ async function saveCard(){
             editingCardId
         );
 
-
     if(error){
 
         message(
@@ -1682,28 +1597,37 @@ async function saveCard(){
         return;
     }
 
+    const wasAdmin =
+        editingFromAdmin;
 
     closeEdit();
 
+    if(wasAdmin){
 
-    message(
-        "clientMessage",
-        "✅ Carte enregistrée !"
-    );
-
-
-    const {
-        data:{user}
-    } =
-        await supabaseClient.auth
-        .getUser();
-
-
-    if(user){
-
-        await loadClient(
-            user.id
+        message(
+            "adminMessage",
+            "✅ Carte enregistrée !"
         );
+
+        await loadAdmin();
+
+    }else{
+
+        message(
+            "clientMessage",
+            "✅ Carte enregistrée !"
+        );
+
+        const {
+            data:{user}
+        } =
+            await supabaseClient.auth
+            .getUser();
+
+        if(user){
+
+            await loadClient(user.id);
+        }
     }
 }
 
@@ -1717,29 +1641,22 @@ async function loadNFC(){
     const path =
         window.location.pathname;
 
-
     const match =
-        path.match(
-            /\/c\/(\d+)/
-        );
-
+        path.match(/\/c\/(\d+)/);
 
     if(!match){
 
         return false;
     }
 
-
     const id =
         Number(match[1]);
-
 
     hide("loginPage");
     hide("adminPage");
     hide("clientPage");
 
     show("nfcPage");
-
 
     const {
         data:card,
@@ -1753,7 +1670,6 @@ async function loadNFC(){
         .eq("id",id)
         .single();
 
-
     if(error || !card){
 
         document.getElementById(
@@ -1761,16 +1677,13 @@ async function loadNFC(){
         ).textContent =
             "❌ Carte introuvable";
 
-
         document.getElementById(
             "nfcDescription"
         ).textContent =
             "Cette carte n'existe pas.";
 
-
         return true;
     }
-
 
     document.getElementById(
         "nfcShop"
@@ -1778,13 +1691,11 @@ async function loadNFC(){
         card.shop_name ||
         "NFC Manager";
 
-
     document.getElementById(
         "nfcDescription"
     ).textContent =
         card.description ||
         "Redirection vers Google...";
-
 
     if(card.google_review_url){
 
@@ -1804,9 +1715,7 @@ async function loadNFC(){
             "nfcDescription"
         ).textContent =
             "Cette carte n'est pas encore configurée.";
-
     }
-
 
     return true;
 }
@@ -1821,12 +1730,10 @@ async function loadNFC(){
     const isNFC =
         await loadNFC();
 
-
     if(isNFC){
 
         return;
     }
-
 
     const {
         data:{session}
@@ -1835,7 +1742,6 @@ async function loadNFC(){
         .auth
         .getSession();
 
-
     if(session){
 
         await loadUser();
@@ -1843,11 +1749,9 @@ async function loadNFC(){
     }else{
 
         show("loginPage");
-
     }
 
 })();
-
 </script>
 
 </body>
