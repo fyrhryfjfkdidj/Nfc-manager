@@ -894,9 +894,11 @@ async function signup(){
     } =
         await supabaseClient.auth.signUp({
 
-            email:email,
-
-            password:password
+            email: email,
+password: password,
+options: {
+    emailRedirectTo: "https://fyrhryfjfkdidj.github.io/Nfc-manager/"
+}
 
         });
 
