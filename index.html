@@ -2294,12 +2294,10 @@ async function loadNFC(){
         card.shop_name ||
         "NFC Manager";
 
-    // Affiche la description
-    document.getElementById(
-        "nfcDescription"
-    ).textContent =
-        card.description ||
-        "Redirection vers Google...";
+    // // Aucun texte sous le nom du commerce
+document.getElementById(
+    "nfcDescription"
+).textContent = "";
 
     // Redirection vers Google Avis
     if(card.google_review_url){
