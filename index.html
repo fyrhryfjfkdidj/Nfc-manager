@@ -2214,22 +2214,44 @@ async function saveCard(){
 
 async function loadNFC(){
 
-    const path =
-        window.location.pathname;
+    // Récupère le numéro de carte dans ?card=1
+    const params = new URLSearchParams(
+        window.location.search
+    );
 
-    const match =
-        path.match(
-            /\/c\/(\d+)/
-        );
+    const cardParam = params.get("card");
 
-    if(!match){
-
+    // Aucun paramètre ? On laisse le site fonctionner normalement
+    if(!cardParam){
         return false;
     }
 
-    const id =
-        Number(match[1]);
+    const id = Number(cardParam);
 
+    // Vérification du numéro de carte
+    if(!Number.isInteger(id) || id <= 0){
+
+        hide("loginPage");
+        hide("signupPage");
+        hide("adminPage");
+        hide("clientPage");
+
+        show("nfcPage");
+
+        document.getElementById(
+            "nfcShop"
+        ).textContent =
+            "❌ Carte invalide";
+
+        document.getElementById(
+            "nfcDescription"
+        ).textContent =
+            "Le numéro de carte est incorrect.";
+
+        return true;
+    }
+
+    // Affiche la page NFC publique
     hide("loginPage");
     hide("signupPage");
     hide("adminPage");
@@ -2237,21 +2259,19 @@ async function loadNFC(){
 
     show("nfcPage");
 
+    // Recherche la carte dans Supabase
     const {
-        data:card,
+        data: card,
         error
-    } =
-        await supabaseClient
+    } = await supabaseClient
         .from("nfc_cards")
         .select(
             "id,shop_name,google_review_url,description"
         )
-        .eq(
-            "id",
-            id
-        )
+        .eq("id", id)
         .single();
 
+    // Carte introuvable
     if(error || !card){
 
         document.getElementById(
@@ -2267,29 +2287,29 @@ async function loadNFC(){
         return true;
     }
 
+    // Affiche le nom du commerce
     document.getElementById(
         "nfcShop"
     ).textContent =
         card.shop_name ||
         "NFC Manager";
 
+    // Affiche la description
     document.getElementById(
         "nfcDescription"
     ).textContent =
         card.description ||
         "Redirection vers Google...";
 
+    // Redirection vers Google Avis
     if(card.google_review_url){
 
-        setTimeout(
-            function(){
+        setTimeout(function(){
 
-                window.location.href =
-                    card.google_review_url;
+            window.location.href =
+                card.google_review_url;
 
-            },
-            1200
-        );
+        }, 1200);
 
     }else{
 
