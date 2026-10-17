@@ -1,1 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Axom Multi Search</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;padding:30px 16px;
+  font-family:Arial,sans-serif;color:#f5f5f5;
+  background:linear-gradient(135deg,#080b14,#17152b);
+  display:flex;justify-content:center;align-items:center
+}
+main{
+  width:100%;max-width:700px;padding:28px;
+  background:#151827;border:1px solid #30354b;
+  border-radius:20px;box-shadow:0 20px 60px #0005
+}
+h1{margin:0 0 8px;font-size:30px}
+p{color:#aab1c5;line-height:1.5}
+input,button{
+  width:100%;padding:14px;margin-top:12px;
+  border-radius:10px;font-size:16px
+}
+input{background:#0d1120;color:white;border:1px solid #424968}
+button{
+  background:#8273ff;color:white;border:0;
+  cursor:pointer;font-weight:bold
+}
+button:hover{background:#6c5ce7}
+.engines{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+label{
+  padding:13px;background:#20253a;border-radius:9px;
+  display:flex;gap:10px;align-items:center
+}
+label input{width:auto;margin:0}
+.note{font-size:12px;color:#9099b2;margin-top:20px}
+</style>
+</head>
+<body>
+<main>
+  <h1>🔎 Axom Multi Search</h1>
+  <p>Une requête. Plusieurs moteurs. Les résultats s'ouvrent dans des onglets séparés.</p>
+  <input id="query" placeholder="Entre ta recherche..." autocomplete="off">
+  <div class="engines">
+    <label><input type="checkbox" value="google" checked> Google</label>
+    <label><input type="checkbox" value="bing" checked> Bing</label>
+    <label><input type="checkbox" value="duck" checked> DuckDuckGo</label>
+    <label><input type="checkbox" value="brave"> Brave Search</label>
+  </div>
 
+Lancer les recherches ↗
+
+  <p id="status" aria-live="polite"></p>
+  <p class="note">Les résultats sont fournis par les moteurs sélectionnés. Ton navigateur peut bloquer l'ouverture de plusieurs onglets.</p>
+</main>
+<script>
+const engines = {
+  google: q => 'https://www.google.com/search?q=' + encodeURIComponent(q),
+  bing: q => 'https://www.bing.com/search?q=' + encodeURIComponent(q),
+  duck: q => 'https://duckduckgo.com/?q=' + encodeURIComponent(q),
+  brave: q => 'https://search.brave.com/search?q=' + encodeURIComponent(q)
+};
+function search() {
+  const query = document.getElementById('query').value.trim();
+  const selected = [...document.querySelectorAll('.engines input:checked')];
+  if (!query) {
+    document.getElementById('status').textContent =
+      'Entre un terme à rechercher.';
+    return;
+  }
+  if (!selected.length) {
+    document.getElementById('status').textContent =
+      'Sélectionne au moins un moteur.';
+    return;
+  }
+  document.getElementById('status').textContent =
+    `${selected.length} recherche(s) demandée(s). Autorise les fenêtres pop-up si nécessaire.`;
+  selected.forEach((checkbox, index) => {
+    setTimeout(() => {
+      window.open(
+        engines[checkbox.value](query),
+        '_blank',
+        'noopener,noreferrer'
+      );
+    }, index * 250);
+  });
+}
+document.getElementById('search').addEventListener('click', search);
+document.getElementById('query').addEventListener('keydown', e => {
+  if (e.key === 'Enter') search();
+});
+</script>
+</body>
+</html>
